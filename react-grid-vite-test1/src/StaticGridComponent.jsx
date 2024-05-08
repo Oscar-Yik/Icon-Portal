@@ -10,16 +10,23 @@ export default function StaticGridComponent({layout, info}) {
     const defaultMaxRows = 11;
     const margins = 10;
 
+    // add this line right under "data-grid={layout[j]}" to see grid box
+    // style={{ background: '#242424'}}
     function generateDOM() {
-    
+        
+        const correctedLayout = layout.map(elem => ({ ...elem, y: elem.y + 3 }));
+        console.log(layout);
+        console.log(correctedLayout);
+
         return _.map(_.range(layout.length), (j) => {
             return (
               <div key={layout[j].i} 
-                   data-grid={layout[j]} 
-                   style={{ background: '#242424'}}>
-                <a className="try" target="_blank" 
+                   data-grid={correctedLayout[j]}>
+                <a target="_blank" 
                 href={info[j]} 
-                height={100}>
+                style={{display: 'block',
+                        width: layout[j].w*defaultRowHeight,
+                        height: layout[j].h*defaultRowHeight}}>
                     <img src={info[j] + "/favicon.ico"} 
                         alt="Dinosaur" 
                         width={layout[j].w*defaultRowHeight} 

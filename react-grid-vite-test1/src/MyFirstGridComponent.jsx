@@ -2,8 +2,10 @@ import _, { remove } from "lodash";
 import React, { useState } from 'react';
 import GridLayout from "react-grid-layout"; 
 import EditableTextItem from "./EditableText";
+import PopUp from "./PopUp";
 
-import 'bootstrap/dist/css/bootstrap.css';
+import "./Background.css"
+// import 'bootstrap/dist/css/bootstrap.css';
 
 // function Block({ id, onBlockClick }) {
 
@@ -33,7 +35,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 //       );
 // }
 
-export default function MyFirstGridComponent({layout, info, onUpdateLayout, onUpdateInfo}) {
+export default function MyFirstGridComponent({layout, info, backImg, onUpdateLayout, onUpdateInfo, onUpdateBackImg}) {
     // const [layout, setLayout] = useState([
     //     { i: "a", x: 4, y: 0, w: 1, h: 2, isBounded: true},
     //     { i: "b", x: 4, y: 0, w: 1, h: 2, isBounded: true},
@@ -102,6 +104,11 @@ export default function MyFirstGridComponent({layout, info, onUpdateLayout, onUp
         onUpdateInfo(newInfo);
     }
 
+    function updateBackground(trash, newImg) {
+        console.log(newImg);
+        onUpdateBackImg(newImg);
+    }
+
     function generateDOM() {
     
         return _.map(_.range(layout.length), (j) => {
@@ -109,7 +116,7 @@ export default function MyFirstGridComponent({layout, info, onUpdateLayout, onUp
               <div key={layout[j].i} 
                    data-grid={layout[j]} 
                    style={{ background: '#009688'}}>
-                {console.log(info)}
+                {/* {console.log(info)} */}
                 <EditableTextItem key={layout[j].i} 
                                   initialText={info[j]} 
                                   id={j} 
@@ -184,8 +191,9 @@ export default function MyFirstGridComponent({layout, info, onUpdateLayout, onUp
     // ))}
 
     return (
-        <div>
+        <div className="test">
             <button type="button" class="btn btn-outline-success" onClick={addBlock}>Add Block</button>
+            <PopUp backImg={backImg} UpdateBackImg={updateBackground}/>
             <GridLayout
                 className="layout"
                 //layout={layout}
@@ -193,6 +201,7 @@ export default function MyFirstGridComponent({layout, info, onUpdateLayout, onUp
                 rowHeight={defaultRowHeight}
                 width={window.innerWidth}
                 compactType={null}
+                preventCollision={true}
                 onLayoutChange={(newLayout) => onUpdateLayout(newLayout)}    
                 maxRows={defaultMaxRows}
             >

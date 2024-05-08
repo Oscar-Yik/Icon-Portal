@@ -5,32 +5,46 @@ const router = express.Router();
 
 // Load Block model
 const Block = require('../../models/Block');
+const Thing = require('../../models/Thing');
 
 // @route   GET api/blocks/test
 // @desc    Tests blocks route
 // @access  Public
 router.get('/test', (req, res) => res.send('Block route testing!'));
 
-// @route   GET api/Blocks
+// @route   GET api/blocks
 // @desc    Get all Blocks
 // @access  Public
 router.get('/', (req, res) => {
-  Block.find()
+  // const query = {
+  //   i: { $exists: true }
+  // };
+  Block.find({ i: { $exists: true } })
     .then(Blocks => res.json(Blocks))
     .catch(err => res.status(404).json({ noBlocksfound: 'No Blocks found' }));
 });
 
-// @route   GET api/Blocks/:i
-// @desc    Get single Block by i
+// @route   GET api/blocks/background
+// @desc    Get background image 
 // @access  Public
-router.get('/:i', (req, res) => {
-  //Block.findById(req.params.i)
-  Block.findOne({i: req.params.i})
-    .then(Block => res.json(Block))
-    .catch(err => res.status(404).json({ noBlockfound: 'No Block found' }));
+router.get('/background', (req, res) => {
+  Thing.findOne({type: "backgroundImage"})
+    .then(Thing => res.json(Thing))
+    .catch(err => res.status(404).json({ noBlockfound: 'No background image found' }));
 });
 
-// @route   POST api/Blocks
+
+// @route   GET api/blocks/:i
+// @desc    Get single Block by i
+// @access  Public
+// router.get('/:i', (req, res) => {
+//   //Block.findById(req.params.i)
+//   Block.findOne({i: req.params.i})
+//     .then(Block => res.json(Block))
+//     .catch(err => res.status(404).json({ noBlockfound: 'No Block found' }));
+// });
+
+// @route   POST api/blocks
 // @desc    Add/save Block
 // @access  Public
 router.post('/', (req, res) => {
@@ -39,7 +53,19 @@ router.post('/', (req, res) => {
     .catch(err => res.status(400).json({ error: 'Unable to add this Block' }));
 });
 
-// @route   PUT api/Blocks/:i
+// @route   PUT api/blocks/background
+// @desc    Update Background Image
+// @access  Public
+router.put('/background', (req, res) => {
+  //Block.findByIdAndUpdate(req.params.i, req.body)
+  Thing.findOneAndUpdate({type: "backgroundImage"}, {url: req.body.url}, {new: true})
+    .then(() => res.json({ msg: 'Updated successfully', url: req.body.url }))
+    .catch(err =>
+      res.status(400).json({ error: 'Unable to update the Database' })
+    );
+});
+
+// @route   PUT api/blocks/:i
 // @desc    Update Block by i
 // @access  Public
 router.put('/:i', (req, res) => {
@@ -51,7 +77,7 @@ router.put('/:i', (req, res) => {
     );
 });
 
-// @route   DELETE api/Blocks/:i
+// @route   DELETE api/blocks/:i
 // @desc    Delete Block by i
 // @access  Public
 router.delete('/:i', (req, res) => {
