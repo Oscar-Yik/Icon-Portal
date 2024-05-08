@@ -1,212 +1,87 @@
-import _, { remove } from "lodash";
-import React, { useState } from 'react';
+import React from 'react';
 import GridLayout from "react-grid-layout"; 
-import EditableTextItem from "./EditableText";
-import PopUp from "./PopUp";
+import Block from "./Block";
+import EditBox from "./EditBox";
 
 import "./Background.css"
-// import 'bootstrap/dist/css/bootstrap.css';
 
-// function Block({ id, onBlockClick }) {
-
-//     const removeStyle = {
-//         position: "absolute",
-//         right: "2px",
-//         top: 0,
-//         cursor: "pointer"
-//     };
-
-//     return (
-//         <div key={id} 
-//              style={{ background: '#009688'}}
-//         >
-//             {`${id}`}
-//         </div>
-//     );
-
-//     return (
-//         <div key={layout[i].i} data-grid={layout[i]} style={{ background: '#009688'}}>
-//           <EditableTextItem key={layout[i].i} initialText={"hello"} />
-//           <div>
-//               <span className="text">{layout[i].i}</span>
-//           </div>
-//           <span className="remove" style={removeStyle} onClick={() => removeBlock(layout[i].i)}>x</span>
-//         </div>
-//       );
-// }
-
-export default function MyFirstGridComponent({layout, info, backImg, onUpdateLayout, onUpdateInfo, onUpdateBackImg}) {
-    // const [layout, setLayout] = useState([
-    //     { i: "a", x: 4, y: 0, w: 1, h: 2, isBounded: true},
-    //     { i: "b", x: 4, y: 0, w: 1, h: 2, isBounded: true},
-    //     { i: "c", x: 4, y: 0, w: 1, h: 2, isBounded: true }
-    // ]);
-    //[{grid: {}, text: ""}]
-
-    // const [layout, setLayout] = useState([
-    //     {grid: { i: "a", x: 4, y: 0, w: 1, h: 2, isBounded: true}, text: "default"},
-    //     {grid: { i: "b", x: 4, y: 0, w: 1, h: 2, isBounded: true}, text: "default"},
-    //     {grid: { i: "c", x: 4, y: 0, w: 1, h: 2, isBounded: true}, text: "default"}
-    // ]);
-
-    // const [layout, setLayout] = useState([
-    //     { i: "a", x: 4, y: 0, w: 1, h: 2, isBounded: true},
-    //     { i: "b", x: 4, y: 0, w: 1, h: 2, isBounded: true},
-    //     { i: "c", x: 4, y: 0, w: 1, h: 2, isBounded: true}
-    // ]);
-
-    // //const [info, setInfo] = useState(["default", "default", "default"]);
-    // const [info, setInfo] = useState(["https://chat.openai.com", "https://chat.openai.com", "https://chat.openai.com"]);
-
-    const removeStyle = {
-        position: "absolute",
-        right: "2px",
-        top: 0,
-        cursor: "pointer"
-    };
+export default function MyFirstGridComponent({blocks2, delBlocks, showEdit, onUpdateBlocks2, onUpdateDelBlocks, onUpdateShowEdit}) {
 
     const defaultRowHeight = 30; 
-    const defaultCols = 12; 
-    const defaultMaxRows = 11;
+    const defaultCols = 24; 
+    const defaultMaxRows = 15;
     const margins = 10;
-    
-    // layout is an array of objects, see the demo for more complete usage
-    // const layout = [
-    //     //{ i: "a", x: 0, y: 0, w: 1, h: 2, static: true },
-    //     //{ i: "b", x: 1, y: 0, w: 3, h: 2, minW: 2, maxW: 4 },
-    //     { i: "a", x: 4, y: 0, w: 1, h: 2 , isBounded: true},
-    //     { i: "b", x: 4, y: 0, w: 1, h: 2 , isBounded: true},
-    //     { i: "c", x: 4, y: 0, w: 1, h: 2 , isBounded: true}
-    // ];
+    const windowHeight = 970;
+    const windowWidth = 1535;
+    const colWidth = Math.ceil((windowWidth - (margins*(defaultCols + 1)))/defaultCols);
 
-    function addBlock() {
-        const newBlock = { i: `Block ${layout.length + 1}`, x: 0, y: Infinity, w: 2, h: 4, isBounded: true}; 
-        //setLayout([...layout, newBlock]);
-        const newInfo = [...info.slice(), "https://chat.openai.com"];
-        //setInfo(newInfo);
-        onUpdateLayout([...layout, newBlock]);
-        onUpdateInfo(newInfo);
-    }
-    // Problem here
+
     function removeBlock(id) {
-        const index = layout.findIndex((item) => item.i === id); 
-        const newLayout = layout.filter((item) => item.i !== id);
-        //setLayout(newLayout);
-        //setInfo(info.splice(index,1));
-        onUpdateLayout(newLayout);
-        onUpdateInfo(info.splice(index,1));
+        console.log(blocks2);
+        let blocks2copy = [...blocks2];
+        let findBlock = blocks2copy.find(item => item.i === id);
+        onUpdateDelBlocks([...delBlocks, findBlock]);
+        console.log(blocks2);
+        onUpdateBlocks2(blocks2copy.filter(item => item.i !== id));
     }
 
-    function updateInfo(id, text) {
-        const newInfo = info.slice();
-        newInfo[id] = text; 
-        //setInfo(newInfo);
-        onUpdateInfo(newInfo);
+    function updateLayout(nlayout) {
+        let oldLayout = blocks2.slice();
+        for (let i = 0; i < blocks2.length; i++) {
+            oldLayout[i].x = nlayout[i].x;
+            oldLayout[i].y = nlayout[i].y;
+            oldLayout[i].w = nlayout[i].w;
+            oldLayout[i].h = nlayout[i].h;
+        }
+        onUpdateBlocks2(oldLayout);
+        console.log("After: ", blocks2);
     }
 
-    function updateBackground(trash, newImg) {
-        console.log(newImg);
-        onUpdateBackImg(newImg);
+    function updateEdit(i, bool) {
+        let newEdit = showEdit.slice();
+        let edit = newEdit.find(item => item.i === i);
+        console.log("i: ", i, " bool: ", bool);
+        console.log("showEdit: ", showEdit);
+        if (edit) {
+            edit.status = bool; 
+            onUpdateShowEdit(newEdit);
+        }
     }
 
-    function generateDOM() {
-    
-        return _.map(_.range(layout.length), (j) => {
-            return (
-              <div key={layout[j].i} 
-                   data-grid={layout[j]} 
-                   style={{ background: '#009688'}}>
-                {/* {console.log(info)} */}
-                <EditableTextItem key={layout[j].i} 
-                                  initialText={info[j]} 
-                                  id={j} 
-                                  onStateChange={updateInfo}/>
-                <div>
-                    <span className="text">{layout[j].i}</span>
-                </div>
-                <span className="remove" 
-                      style={removeStyle} 
-                      onClick={() => removeBlock(layout[j].i)}>x</span>
-                <a target="_blank" 
-                   href={info[j]} 
-                   height={100}>
-                    <img src={info[j] + "/favicon.ico"} 
-                         alt="Dinosaur" 
-                         width={layout[j].w*defaultRowHeight} 
-                         height={layout[j].h*defaultRowHeight}/>
-                </a>
-              </div>
-            );
-          });
-          // <img src={"http://www.google.com/s2/favicons?domain="+info[j]} alt="Dinosaur" width={30}/>
-          //<img src={info[j] + "/favicon.ico"} alt="Dinosaur" />
-          // <span className="text">{layout[i].i}</span>
-
-        // {layout.map((item) => (
-        //     <div key={item.i} 
-        //          style={{ background: '#009688'}}
-        //     >
-        //         {`${item.i}`}
-        //         <span
-        //             className='remove'
-        //             style={removeStyle}
-        //             onClick={() => removeBlock(item.i)}
-        //         > 
-        //             x
-        //         </span>
-        //     </div>
-        // ))}
+    function generateNewDOM() {
+        let grid = blocks2.map(obj => {
+            const {url, ...rest} = obj;
+            return rest; 
+        })
+        return blocks2.map(block => {
+            let index = block.i;
+            let edit = showEdit.find(item => item.i === index);
+            let gridItem = grid.find(item => item.i === index);
+            return <div key={block.i}
+                        data-grid={gridItem}
+                        className="block">
+                            <Block block={block} 
+                                   removeBlock={(i) => removeBlock(i)}
+                                   onUpdateEdit={(i, bool) => updateEdit(i, bool)}/>
+                    </div>
+        })
     }
-
-    // <div key="a" style={{ background: '#ff4d4f' }}>a</div>
-    // <div key="b" style={{ background: '#40a9ff' }}>b</div>
-    // <div key="c" style={{ background: '#73d13d' }}>c</div>
-
-    // <div key={item.i} 
-    //      style={{ background: '#009688'}}
-    // >
-    //     {`${item.i}`}
-    //     <span
-    //         className='remove'
-    //         style={removeStyle}
-    //         onClick={() => removeBlock(item.i)}
-    //     > 
-    //         x
-    //     </span>
-    // </div>
-
-    // {layout.map((item) => (
-    //     <div key={item.i} 
-    //          style={{ background: '#009688'}}
-    //     >
-    //         {`${item.i}`}
-    //         <span
-    //             className='remove'
-    //             style={removeStyle}
-    //             onClick={() => removeBlock(item.i)}
-    //         > 
-    //             x
-    //         </span>
-    //     </div>
-    // ))}
 
     return (
         <div className="test">
-            <button type="button" class="btn btn-outline-success" onClick={addBlock}>Add Block</button>
-            <PopUp backImg={backImg} UpdateBackImg={updateBackground}/>
             <GridLayout
                 className="layout"
-                //layout={layout}
                 cols={defaultCols}
                 rowHeight={defaultRowHeight}
                 width={window.innerWidth}
                 compactType={null}
                 preventCollision={true}
-                onLayoutChange={(newLayout) => onUpdateLayout(newLayout)}    
+                onLayoutChange={(newLayout) => updateLayout(newLayout)}    
                 maxRows={defaultMaxRows}
             >
-                {generateDOM()}
+                {generateNewDOM()}
             </GridLayout>
+            <EditBox showEdit={showEdit} updateEdit={onUpdateShowEdit} blocks2={blocks2} updateBlocks2={onUpdateBlocks2}/>
         </div>
     );
 } 

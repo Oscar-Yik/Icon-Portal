@@ -9,8 +9,11 @@
   width: 4.0rem;
 }
 
-/*
-.try img {
-  width: 100%;
+.anchor {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  width: 100px;
+  height: 100px;
+  background-color: rgba(0,0,0,0);
 }
-*/

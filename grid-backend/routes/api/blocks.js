@@ -33,6 +33,24 @@ router.get('/background', (req, res) => {
     .catch(err => res.status(404).json({ noBlockfound: 'No background image found' }));
 });
 
+// @route   GET api/blocks/color
+// @desc    Get header color 
+// @access  Public
+router.get('/color', (req, res) => {
+  Thing.findOne({type: "headerColor"})
+    .then(Thing => res.json(Thing))
+    .catch(err => res.status(404).json({ noBlockfound: 'No header color found' }));
+});
+
+// @route   GET api/blocks/nameID
+// @desc    Get header nameID
+// @access  Public
+router.get('/nameID', (req, res) => {
+  Thing.findOne({type: "nameID"})
+    .then(Thing => res.json(Thing))
+    .catch(err => res.status(404).json({ noBlockfound: 'No nameID found' }));
+});
+
 
 // @route   GET api/blocks/:i
 // @desc    Get single Block by i
@@ -65,13 +83,42 @@ router.put('/background', (req, res) => {
     );
 });
 
+// @route   PUT api/blocks/color
+// @desc    Update Header Color
+// @access  Public
+router.put('/color', (req, res) => {
+  //Block.findByIdAndUpdate(req.params.i, req.body)
+  Thing.findOneAndUpdate({type: "headerColor"}, {url: req.body.url}, {new: true})
+    .then(() => res.json({ msg: 'Updated successfully', url: req.body.url }))
+    .catch(err =>
+      res.status(400).json({ error: 'Unable to update the Database' })
+    );
+});
+
+// @route   PUT api/blocks/nameID
+// @desc    Update nameID
+// @access  Public
+router.put('/nameID', (req, res) => {
+  //Block.findByIdAndUpdate(req.params.i, req.body)
+  Thing.findOneAndUpdate({type: "nameID"}, {url: req.body.url}, {new: true})
+    .then(() => res.json({ msg: 'Updated successfully', url: req.body.url }))
+    .catch(err =>
+      res.status(400).json({ error: 'Unable to update the Database' })
+    );
+});
+
 // @route   PUT api/blocks/:i
 // @desc    Update Block by i
 // @access  Public
 router.put('/:i', (req, res) => {
   //Block.findByIdAndUpdate(req.params.i, req.body)
-  Block.findOneAndUpdate({i: req.params.i})
-    .then(Block => res.json({ msg: 'Updated successfully' }))
+  Block.findOneAndUpdate({ i: req.params.i }, req.body, { new: true })
+    .then(Block => {
+      if (!Block) {
+        return res.status(404).json({error: "Block not found"});
+      }  
+      res.json({ msg: 'Updated successfully', block: Block })
+    })
     .catch(err =>
       res.status(400).json({ error: 'Unable to update the Database' })
     );

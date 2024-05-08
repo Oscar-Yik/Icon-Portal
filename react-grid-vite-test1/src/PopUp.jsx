@@ -4,13 +4,13 @@ import React from 'react';
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import EditableTextItem from './EditableText';
+import "./Background.css"
 
 export default function PopUp({ backImg, UpdateBackImg }) {
     return (
         <div>
             <Popup trigger=
-                {<button type="button" 
-                         className="btn btn-outline-warning">Change Background Image</button>}
+                {<button className="navButton" type="button">Change Background</button>}
                 modal nested>
                     {close => (
                         <div>

@@ -1,57 +1,54 @@
-import _, { remove } from "lodash";
 import GridLayout from "react-grid-layout"; 
 
-import './App.css'
+import './Background.css'
 
-export default function StaticGridComponent({layout, info}) {
+export default function StaticGridComponent({blocks2}) {
 
     const defaultRowHeight = 30; 
-    const defaultCols = 12; 
-    const defaultMaxRows = 11;
+    const defaultCols = 24; 
+    const defaultMaxRows = 15;
     const margins = 10;
 
-    // add this line right under "data-grid={layout[j]}" to see grid box
-    // style={{ background: '#242424'}}
-    function generateDOM() {
-        
-        const correctedLayout = layout.map(elem => ({ ...elem, y: elem.y + 3 }));
-        console.log(layout);
-        console.log(correctedLayout);
-
-        return _.map(_.range(layout.length), (j) => {
-            return (
-              <div key={layout[j].i} 
-                   data-grid={correctedLayout[j]}>
-                <a target="_blank" 
-                href={info[j]} 
-                style={{display: 'block',
-                        width: layout[j].w*defaultRowHeight,
-                        height: layout[j].h*defaultRowHeight}}>
-                    <img src={info[j] + "/favicon.ico"} 
-                        alt="Dinosaur" 
-                        width={layout[j].w*defaultRowHeight} 
-                        height={layout[j].h*defaultRowHeight}/>
-                </a>
-              </div>
-            );
-          });
+    function generateNewDOM() {
+        let grid = blocks2.map(obj => {
+            const {url, ...rest} = obj;
+            return rest; 
+        })
+        return blocks2.map(block => {
+            let index = block.i;
+            let gridItem = grid.find(item => item.i === index);
+            return <div key={block.i}
+                        data-grid={gridItem}
+                        className="static-block">
+                            <div width={block.w*defaultRowHeight} 
+                                 height={block.h*defaultRowHeight}>
+                                <a target="_blank" 
+                                href={block.url}
+                                className='link'>
+                                    <img src={block.url + "/favicon.ico"} 
+                                        alt="Dinosaur" 
+                                        width={block.w*defaultRowHeight} 
+                                        height={block.h*defaultRowHeight}>
+                                    </img>
+                                </a>
+                            </div>
+                    </div>
+        })
     }
 
     return (
-        <div>
+        <div className="static">
             <GridLayout
                 className="layout"
-                //layout={layout}
                 cols={defaultCols}
                 rowHeight={defaultRowHeight}
                 width={window.innerWidth}
-                compactType={null}
-                //onLayoutChange={(newLayout) => setLayout(newLayout)}    
+                compactType={null}  
                 maxRows={defaultMaxRows}
                 isDraggable={false}
                 isResizable={false}
             >
-                {generateDOM()}
+                {generateNewDOM()}
             </GridLayout>
         </div>
     );
