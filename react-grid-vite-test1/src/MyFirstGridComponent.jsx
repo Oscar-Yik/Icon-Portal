@@ -2,19 +2,13 @@ import React from 'react';
 import GridLayout from "react-grid-layout"; 
 import Block from "./Block";
 import EditBox from "./EditBox";
+import getConstants from './Constants';
 
 import "./Background.css"
 
 export default function MyFirstGridComponent({blocks2, delBlocks, showEdit, onUpdateBlocks2, onUpdateDelBlocks, onUpdateShowEdit}) {
 
-    const defaultRowHeight = 30; 
-    const defaultCols = 24; 
-    const defaultMaxRows = 15;
-    const margins = 10;
-    const windowHeight = 970;
-    const windowWidth = 1535;
-    const colWidth = Math.ceil((windowWidth - (margins*(defaultCols + 1)))/defaultCols);
-
+    const { defaultRowHeight, defaultCols, defaultMaxRows, windowHeight, windowWidth } = getConstants();
 
     function removeBlock(id) {
         console.log(blocks2);
@@ -68,12 +62,13 @@ export default function MyFirstGridComponent({blocks2, delBlocks, showEdit, onUp
     }
 
     return (
-        <div className="test">
+        <div className="test"
+             style={{width: windowWidth, height: windowHeight}}>
             <GridLayout
                 className="layout"
                 cols={defaultCols}
                 rowHeight={defaultRowHeight}
-                width={window.innerWidth}
+                width={windowWidth}
                 compactType={null}
                 preventCollision={true}
                 onLayoutChange={(newLayout) => updateLayout(newLayout)}    

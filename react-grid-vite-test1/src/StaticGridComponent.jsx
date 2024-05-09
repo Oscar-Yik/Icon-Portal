@@ -1,13 +1,10 @@
 import GridLayout from "react-grid-layout"; 
-
+import getConstants from "./Constants";
 import './Background.css'
 
 export default function StaticGridComponent({blocks2}) {
 
-    const defaultRowHeight = 30; 
-    const defaultCols = 24; 
-    const defaultMaxRows = 15;
-    const margins = 10;
+    const { defaultRowHeight, defaultCols, defaultMaxRows, windowHeight, windowWidth } = getConstants();
 
     function generateNewDOM() {
         let grid = blocks2.map(obj => {
@@ -37,12 +34,12 @@ export default function StaticGridComponent({blocks2}) {
     }
 
     return (
-        <div className="static">
+        <div style={{width: windowWidth, height: windowHeight}}>
             <GridLayout
                 className="layout"
                 cols={defaultCols}
                 rowHeight={defaultRowHeight}
-                width={window.innerWidth}
+                width={windowWidth}
                 compactType={null}  
                 maxRows={defaultMaxRows}
                 isDraggable={false}

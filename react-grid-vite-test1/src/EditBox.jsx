@@ -1,17 +1,12 @@
 import React from 'react';
 import EditableTextItem from "./EditableText";
+import getConstants from './Constants';
 
 import "./Background.css"
 
 export default function EditBox({showEdit, updateEdit, blocks2, updateBlocks2}) {
 
-    const defaultRowHeight = 30; 
-    const defaultCols = 24; 
-    const defaultMaxRows = 15;
-    const margins = 10;
-    const windowHeight = 970;
-    const windowWidth = 1535;
-    const colWidth = Math.ceil((windowWidth - (margins*(defaultCols + 1)))/defaultCols);
+    const { defaultRowHeight, margins, colWidth } = getConstants();
 
     function updateInfo(id, text) {
         let blocks2copy = blocks2.slice();
@@ -53,6 +48,7 @@ export default function EditBox({showEdit, updateEdit, blocks2, updateBlocks2}) 
                                                   initialText={block.url} 
                                                   id={block.i} 
                                                   onStateChange={updateInfo}/>
+                                <div>Block ID: {block.i}</div>
                             </div>
                         <div className="left-arrow" 
                              style={{top: boxY+10, left: boxX-15}}

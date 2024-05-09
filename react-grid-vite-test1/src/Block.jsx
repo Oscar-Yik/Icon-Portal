@@ -1,15 +1,13 @@
 import React from 'react';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import getConstants from './Constants';
 
 import "./Background.css"
 
 export default function Block ({block, removeBlock, onUpdateEdit}) {
     
-    const defaultRowHeight = 30; 
-    const defaultCols = 24; 
-    const defaultMaxRows = 15;
-    const margins = 10;
+    const { defaultRowHeight } = getConstants();
 
     return (
         <div width={block.w*defaultRowHeight} 

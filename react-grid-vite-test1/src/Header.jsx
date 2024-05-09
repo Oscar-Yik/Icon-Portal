@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import PopUp from "./PopUp";
 
 import 'bootstrap/dist/css/bootstrap.css';
-import './App.css'
 import './Background.css'
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
