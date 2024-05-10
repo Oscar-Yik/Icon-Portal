@@ -4,6 +4,7 @@ import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import StaticGridComponent from './StaticGridComponent';
 import MyFirstGridComponent from './MyFirstGridComponent';
 import Header from './Header';
+import AddBlock from './navigation/AddBlock';
 import PopUp from "./PopUp";
 
 import 'bootstrap/dist/css/bootstrap.css';
@@ -25,6 +26,8 @@ function App() {
   const [headerColor, setHeaderColor] = useState("#000000");
   const [edit, setEdit] = useState([]);
   const [nameID, setNameID] = useState(0);
+  const [colors, setColors] = useState([]);
+
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -53,7 +56,8 @@ function App() {
   // on startup fetch blocks, background, header color, nameID
   useEffect(() => {
     fetchData("blocks").then(async (data) => {
-      parseJson(data);
+      // parseJson(data);
+      setBlocks(data);
       let newShowEdit = [];
       for (let i = 0; i < data.length; i++) {
           newShowEdit.push({i: data[i].i, status: false});
@@ -74,34 +78,19 @@ function App() {
     });
   }, []);
 
-  async function parseJson(blocks) {
-    let b2 = [];
-    blocks.map((block) => {
-      delete block._id;
-      delete block.__v;
-      b2.push(block);
-    });
-    console.log("called parseJSON: ", b2);
-    setBlocks(b2);
-  }
+  // async function parseJson(blocks) {
+  //   let b2 = [];
+  //   blocks.map((block) => {
+  //     delete block._id;
+  //     delete block.__v;
+  //     b2.push(block);
+  //   });
+  //   console.log("called parseJSON: ", b2);
+  //   setBlocks(b2);
+  // }
 
   function updateBackground(trash, newImg) {
     setBackImg(newImg);
-  }
-
-  function addBlock() {
-    const newBlock2 = { i: `block ${nameID}`, 
-                        x: 0, 
-                        y: 0, 
-                        w: 2, 
-                        h: 4, 
-                        isBounded: true, 
-                        url: "https://chat.openai.com"}; 
-    setAddBlocks([...addBlocks, newBlock2]);
-    setBlocks([...blocks2, newBlock2]);
-    let newNameID = (nameID > 150) ? 0 : nameID + 1; 
-    setNameID(newNameID);
-    setEdit([...edit, {i: newBlock2.i, status: false}]);
   }
 
   async function updateThings(name, state) {
@@ -176,20 +165,17 @@ function App() {
       }}>
       <ul className="nav" style={{ backgroundColor: headerColor }}>
         <li className="navItem">
-          {/* <Link className='navLink' to="/" onClick={() => setEdit(false)}>Home</Link> */}
           <button className='navLink' onClick={() => {navigate("/")}}>Home</button>
         </li>
         <li className="navItem">
           <button className="navButton" type="button" onClick={saveGrid}>Save</button>
         </li>
         <li className="navItem">
-          {/* <Link className="navLink" to="/edit-grid" onClick={() => setEdit(true)}>Edit</Link> */}
           <button className='navLink' onClick={() => {navigate("/edit-grid")}}>Edit</button>
         </li>
         {(location.pathname === '/edit-grid') && (
-          <li className='navItem'>
-            <button className='navButton' onClick={addBlock}>Add Block</button>
-          </li>
+          <AddBlock blocks2={blocks2} addBlocks={addBlocks} nameID={nameID} edit={edit} updateBlocks={setBlocks}
+                    updateAddBlocks={setAddBlocks} updateNameID={setNameID} updateEdit={setEdit}/>
         )}
         {(location.pathname === '/edit-grid') && (
           <li className="wideNavItem"> 
@@ -200,10 +186,6 @@ function App() {
           <input type="color" value={headerColor} onChange={handleColorChange}/>
         </li>
       </ul>
-      {/* <Header blocks2={blocks2} backImg={backImg} headerColor={headerColor} addBlocks={addBlocks} edit={edit} nameID={nameID}
-              delBlocks={delBlocks} location={location} navigate={navigate} onUpdateBlocks2={setBlocks} 
-              onUpdateBackImg={setBackImg} onUpdateHeader={setHeaderColor} onUpdateAdd={setAddBlocks} onUpdateEdit={setEdit} 
-              onUpdateNameID={setNameID}onUpdateDel={setDelBlocks}/> */}
       <Routes>
         <Route path="/" element={<StaticGridComponent blocks2={blocks2}/>} />
         <Route

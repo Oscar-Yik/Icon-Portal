@@ -49,7 +49,7 @@ export default function EditBox({showEdit, updateEdit, blocks2, updateBlocks2}) 
                                                   id={block.i} 
                                                   onStateChange={updateInfo}/>
                                 <div>Block ID: {block.i}</div>
-                            </div>
+                        </div>
                         <div className="left-arrow" 
                              style={{top: boxY+10, left: boxX-15}}
                              onClick={(event) => event.stopPropagation()}> </div>

@@ -12,8 +12,16 @@ export default function Block ({block, removeBlock, onUpdateEdit}) {
     return (
         <div width={block.w*defaultRowHeight} 
              height={block.h*defaultRowHeight}>
-          <DeleteIcon className="removeStyle" onClick={() => removeBlock(block.i)}/>
-          <EditIcon className="editButton" onClick={() => onUpdateEdit(block.i, true)}/>
+          {(block.h === 1) ?
+            <DeleteIcon className="small-delete" onClick={() => removeBlock(block.i)}/>
+            :
+            <DeleteIcon className="removeStyle" onClick={() => removeBlock(block.i)}/>
+          }
+          {(block.h === 1) ?
+            <EditIcon className="small-edit" onClick={() => onUpdateEdit(block.i, true)}/>
+            :
+            <EditIcon className="editButton" onClick={() => onUpdateEdit(block.i, true)}/>
+          }
             <a target="_blank" 
               href={block.url}
               className='link'>

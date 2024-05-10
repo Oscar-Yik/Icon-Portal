@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Verdana&display=swap');
+
 #root {
   text-align: center;
   
@@ -97,6 +99,23 @@
   cursor: pointer;
 }
 
+.small-edit, 
+.small-delete {
+  position: absolute;
+  cursor: pointer;
+  transform: scale(0.8);
+}
+
+.small-edit {
+  top: 0px;
+  left: 0px;
+}
+
+.small-delete {
+  top: 0px;
+  right: 0px;
+}
+
 .removeStyle {
   top: 0px;
 }
@@ -113,6 +132,7 @@
 
 .block {
   background: #6D78BF;
+  box-shadow: 5px 5px 5px rgba(0,0,0,0.5);
 }
 
 .block,
@@ -131,10 +151,18 @@
 
 .exp {
   position: fixed;
-  width: 100px;
   height: 100px;
-  background-color: #3378DE;
+  background-color: #C19FB3;
   z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+  font-family: 'Verdana', sans-serif;
+  font-size: 14px;
+  color: darkslategray;
+  box-shadow: 5px 5px 5px rgba(0,0,0,0.5);
 }
 
 .left-arrow {
@@ -143,7 +171,7 @@
   height: 0;
   border-top: 10px solid transparent;
   border-bottom: 10px solid transparent;
-  border-right: 10px solid #3378DE;
+  border-right: 10px solid #C19FB3;
   margin: 2rem;
   z-index: 2;
 }

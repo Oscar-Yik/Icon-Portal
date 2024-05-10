@@ -19,7 +19,8 @@ router.get('/', (req, res) => {
   // const query = {
   //   i: { $exists: true }
   // };
-  Block.find({ i: { $exists: true } })
+  Block.find({})
+    .select('-_id -__v')
     .then(Blocks => res.json(Blocks))
     .catch(err => res.status(404).json({ noBlocksfound: 'No Blocks found' }));
 });
