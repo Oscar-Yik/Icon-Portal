@@ -2,7 +2,8 @@
 
 const express = require("express");
 const connectDB = require("./config/db");
-const routes = require("./routes/api/blocks");
+const blockRoutes = require("./routes/api/blocks");
+const thingRoutes = require("./routes/api/things");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 
@@ -14,7 +15,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // for the /api/blocks path
-app.use("/api/blocks", routes);
+app.use("/api/blocks", blockRoutes);
+app.use("/api/things", thingRoutes);
 
 // Connect Database
 connectDB();

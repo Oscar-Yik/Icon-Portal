@@ -22,11 +22,13 @@ function App() {
   const [backImg, setBackImg] = useState("");
   // https://fiverr-res.cloudinary.com/images/q_auto,f_auto/gigs/129325364/original/afaddcb9d7dfaaf5bff7ef04101935814665ac16/design-an-attractive-background-for-your-website.png
   // https://images.saymedia-content.com/.image/t_share/MTc4NzM1OTc4MzE0MzQzOTM1/how-to-create-cool-website-backgrounds-the-ultimate-guide.png
+  // https://wallpapercave.com/wp/wp13129045.jpg
 
   const [headerColor, setHeaderColor] = useState("#000000");
   const [edit, setEdit] = useState([]);
   const [nameID, setNameID] = useState(0);
-  const [colors, setColors] = useState([]);
+  // [block, header, headerButton, headerFont, grid, editBox, editBoxFont, shadow]
+  const [colors, setColors] = useState({});
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -41,7 +43,7 @@ function App() {
       if (name === "blocks") {
         response = await fetch(`http://localhost:8082/api/blocks`, {method: "GET"}); 
       } else {
-        response = await fetch(`http://localhost:8082/api/blocks/${name}`, {method: "GET"}); 
+        response = await fetch(`http://localhost:8082/api/things/${name}`, {method: "GET"}); 
       }
       if (!response.ok) {
         console.log("Bad Query: ", name);
@@ -70,12 +72,19 @@ function App() {
     });
 
     fetchData("color").then((data) => {
-      setHeaderColor(data.url);
+      const dbColors = {};
+      data.forEach(color => {
+        dbColors[color.type] = color;
+      })
+      // console.log("Colors:", dbColors);
+      setColors(dbColors);
+      setHeaderColor(dbColors.header.url);
     });
 
     fetchData("nameID").then((data) => {
-      setNameID(data.url);
+      setNameID(parseInt(data.url));
     });
+
   }, []);
 
   // async function parseJson(blocks) {
@@ -98,7 +107,7 @@ function App() {
       const jsonBody = {"url": state}; 
       const header = {'Content-Type' : 'application/json'};
       console.log(jsonBody); 
-      const response = await fetch(`http://localhost:8082/api/blocks/${name}`, 
+      const response = await fetch(`http://localhost:8082/api/things/${name}`, 
                                    {method: 'PUT', headers: header, body: JSON.stringify(jsonBody)});
       if (!response.ok) {
         console.log("Bad Query: ", name);
@@ -130,8 +139,8 @@ function App() {
     }
     console.log(blocks2);
     
-    updateThings("background", backImg);
-    updateThings("color", headerColor);
+    updateThings("backgroundImage", backImg);
+    updateThings("header", headerColor);
     updateThings("nameID", nameID.toString());
   }
 
