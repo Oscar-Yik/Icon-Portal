@@ -29,6 +29,8 @@ function App() {
   const [nameID, setNameID] = useState(0);
   const [colors, setColors] = useState([]);
   const [dispColPal, setDisColPal] = useState(false);
+  const [disTheme, setDisTheme] = useState(false);
+  const [theme, setTheme] = useState({});
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -208,7 +210,19 @@ function App() {
                           onClick={() => setDisColPal(true)}>Color Palette</button>
           </li>
         )}
+        {(location.pathname === '/edit-grid') && (
+          <li className='navItem' 
+              style={{backgroundColor: getColor("headerButton"), 
+                      color: getColor("headerFont")}}> 
+              {disTheme && (
+                  <div className='box' 
+                       onClick={() => setDisTheme(false)}></div>)}
+                  <button className='navButton' 
+                          onClick={() => setDisTheme(true)}>Change Theme</button>
+          </li>
+        )}
         <ColorPalette display={dispColPal} colors={colors} updateColors={setColors} getColor={getColor}/>
+        <ColorPalette display={disTheme} colors={colors} updateColors={setColors} getColor={getColor}/>
         <li className='navColor'>
         </li>
       </ul>
