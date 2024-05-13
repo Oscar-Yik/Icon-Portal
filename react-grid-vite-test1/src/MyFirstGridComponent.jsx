@@ -2,11 +2,13 @@ import React from 'react';
 import GridLayout from "react-grid-layout"; 
 import Block from "./Block";
 import EditBox from "./EditBox";
+import GridContainer from './grid_animation/GridContainer';
+import GridOverlay from './grid_animation/GridOverlay';
 import getConstants from './Constants';
 
 import "./Background.css"
 
-export default function MyFirstGridComponent({blocks2, delBlocks, showEdit, onUpdateBlocks2, onUpdateDelBlocks, onUpdateShowEdit}) {
+export default function MyFirstGridComponent({blocks2, delBlocks, showEdit, onUpdateBlocks2, onUpdateDelBlocks, onUpdateShowEdit, getColor}) {
 
     const { defaultRowHeight, defaultCols, defaultMaxRows, windowHeight, windowWidth } = getConstants();
 
@@ -53,7 +55,8 @@ export default function MyFirstGridComponent({blocks2, delBlocks, showEdit, onUp
             let gridItem = grid.find(item => item.i === index);
             return <div key={block.i}
                         data-grid={gridItem}
-                        className="block">
+                        className="block"
+                        style={{backgroundColor: getColor("block")}}>
                             <Block block={block} 
                                    removeBlock={(i) => removeBlock(i)}
                                    onUpdateEdit={(i, bool) => updateEdit(i, bool)}/>
@@ -62,21 +65,22 @@ export default function MyFirstGridComponent({blocks2, delBlocks, showEdit, onUp
     }
 
     return (
-        <div className="test"
-             style={{width: windowWidth, height: windowHeight}}>
-            <GridLayout
-                className="layout"
-                cols={defaultCols}
-                rowHeight={defaultRowHeight}
-                width={windowWidth}
-                compactType={null}
-                preventCollision={true}
-                onLayoutChange={(newLayout) => updateLayout(newLayout)}    
-                maxRows={defaultMaxRows}
-            >
-                {generateNewDOM()}
-            </GridLayout>
-            <EditBox showEdit={showEdit} updateEdit={onUpdateShowEdit} blocks2={blocks2} updateBlocks2={onUpdateBlocks2}/>
-        </div>
+        <GridContainer width={windowWidth} height={windowHeight}>
+            <GridOverlay color={getColor("grid")}>
+                <GridLayout
+                    className="layout"
+                    cols={defaultCols}
+                    rowHeight={defaultRowHeight}
+                    width={windowWidth}
+                    compactType={null}
+                    preventCollision={true}
+                    onLayoutChange={(newLayout) => updateLayout(newLayout)}    
+                    maxRows={defaultMaxRows}
+                >
+                    {generateNewDOM()}
+                </GridLayout>
+                <EditBox showEdit={showEdit} updateEdit={onUpdateShowEdit} blocks2={blocks2} updateBlocks2={onUpdateBlocks2} getColor={getColor}/>
+            </GridOverlay>
+        </GridContainer>
     );
 } 

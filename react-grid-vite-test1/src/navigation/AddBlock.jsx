@@ -1,7 +1,7 @@
 import React from 'react';
 import "./../Background.css";
 
-export default function AddBlock({ blocks2, addBlocks, nameID, edit, updateBlocks, updateAddBlocks, updateNameID, updateEdit }) {
+export default function AddBlock({ blocks2, addBlocks, nameID, edit, updateBlocks, updateAddBlocks, updateNameID, updateEdit, getColor }) {
     function addBlock() {
         const newBlock2 = { i: `block ${nameID}`, 
                             x: 0, 
@@ -18,7 +18,8 @@ export default function AddBlock({ blocks2, addBlocks, nameID, edit, updateBlock
       }
 
     return (
-        <li className='navItem'>
+        <li className='navItem' style={{backgroundColor: getColor("headerButton"), 
+                                        color: getColor("headerFont")}}>
             <button className='navButton' onClick={addBlock}>Add Block</button>
         </li>
     );

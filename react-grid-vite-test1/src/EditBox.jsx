@@ -4,7 +4,7 @@ import getConstants from './Constants';
 
 import "./Background.css"
 
-export default function EditBox({showEdit, updateEdit, blocks2, updateBlocks2}) {
+export default function EditBox({showEdit, updateEdit, blocks2, updateBlocks2, getColor}) {
 
     const { defaultRowHeight, margins, colWidth } = getConstants();
 
@@ -42,7 +42,10 @@ export default function EditBox({showEdit, updateEdit, blocks2, updateBlocks2}) 
                         className="box"
                         onClick={() => clearEditAll()}>
                         <div className="exp" 
-                             style={{top: boxY, left: boxX+25, width: boxWidth}}
+                             style={{top: boxY, left: boxX+25, 
+                                     width: boxWidth, 
+                                     backgroundColor: getColor("editBox"),
+                                     color: getColor("editBoxFont")}}
                              onClick={(event) => event.stopPropagation()}>
                                 <EditableTextItem key={block.i} 
                                                   initialText={block.url} 
@@ -51,7 +54,7 @@ export default function EditBox({showEdit, updateEdit, blocks2, updateBlocks2}) 
                                 <div>Block ID: {block.i}</div>
                         </div>
                         <div className="left-arrow" 
-                             style={{top: boxY+10, left: boxX-15}}
+                             style={{top: boxY+10, left: boxX-15, borderRight: `10px solid ${getColor("editBox")}`}}
                              onClick={(event) => event.stopPropagation()}> </div>
             </div> 
         } else {
