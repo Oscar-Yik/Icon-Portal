@@ -23,20 +23,15 @@ function App() {
   // https://fiverr-res.cloudinary.com/images/q_auto,f_auto/gigs/129325364/original/afaddcb9d7dfaaf5bff7ef04101935814665ac16/design-an-attractive-background-for-your-website.png
   // https://images.saymedia-content.com/.image/t_share/MTc4NzM1OTc4MzE0MzQzOTM1/how-to-create-cool-website-backgrounds-the-ultimate-guide.png
   // https://wallpapercave.com/wp/wp13129045.jpg
+  // https://images8.alphacoders.com/970/970395.jpg
 
-  // const [headerColor, setHeaderColor] = useState("#000000");
   const [edit, setEdit] = useState([]);
   const [nameID, setNameID] = useState(0);
-  // [block, header, headerButton, headerFont, grid, editBox, editBoxFont, shadow]
   const [colors, setColors] = useState([]);
   const [dispColPal, setDisColPal] = useState(false);
 
   const navigate = useNavigate();
   const location = useLocation();
-
-  // const handleColorChange = (event) => {
-  //   setHeaderColor(event.target.value);
-  // }
 
   async function fetchData(name) {
     try {
@@ -59,7 +54,6 @@ function App() {
   // on startup fetch blocks, background, header color, nameID
   useEffect(() => {
     fetchData("blocks").then(async (data) => {
-      // parseJson(data);
       setBlocks(data);
       let newShowEdit = [];
       for (let i = 0; i < data.length; i++) {
@@ -73,19 +67,7 @@ function App() {
     });
 
     fetchData("color").then((data) => {
-      // const dbColors = {};
-      // data.forEach(color => {
-      //   dbColors[color.type] = color;
-      // })
-      // console.log("Colors:", dbColors);
       setColors(data);
-      // const headerCol = data.findIndex(obj => obj.type === "header");
-      // if (headerCol !== -1) {
-      //   setHeaderColor(data[headerCol].url);
-      // } else {
-      //   console.log("uh oh");
-      //   setHeaderColor("#FFFFFF");
-      // }
     });
 
     fetchData("nameID").then((data) => {
@@ -93,17 +75,6 @@ function App() {
     });
 
   }, []);
-
-  // async function parseJson(blocks) {
-  //   let b2 = [];
-  //   blocks.map((block) => {
-  //     delete block._id;
-  //     delete block.__v;
-  //     b2.push(block);
-  //   });
-  //   console.log("called parseJSON: ", b2);
-  //   setBlocks(b2);
-  // }
 
   function updateBackground(trash, newImg) {
     setBackImg(newImg);
@@ -148,6 +119,9 @@ function App() {
     
     updateThings("backgroundImage", backImg);
     // updateThings("header", headerColor);
+    colors.forEach(obj => {
+      updateThings(obj.type, obj.url);
+    })
     updateThings("nameID", nameID.toString());
   }
 
