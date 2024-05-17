@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import "./../Background.css";
 
-export default function ChangeTheme({ colors, display, theme, updateTheme }) {
+export default function SaveTheme({ colors, display, theme, updateTheme, saveGrid }) {
 
     const [allThemes, setAllThemes] = useState([]);
 
@@ -26,7 +26,7 @@ export default function ChangeTheme({ colors, display, theme, updateTheme }) {
 
     if (display) {
         return (
-            <div className='change-theme' style={{backgroundColor: colors.headerButton}}>
+            <div className='save-theme' style={{backgroundColor: colors.headerButton}}>
                 {allThemes.map(obj => (
                     <div key={obj.name} className='theme-container'>
                         <div className='theme-item' style={{color: colors.headerFont}}>
@@ -35,7 +35,7 @@ export default function ChangeTheme({ colors, display, theme, updateTheme }) {
                         <div className='theme-image'>
                             <img src={obj.backImg} 
                                  alt="Triceratops" 
-                                 onClick={() => updateTheme(obj)}
+                                 onClick={() => saveGrid(obj.name)}
                                  width="80px"
                                  height="40px"></img>
                         </div>

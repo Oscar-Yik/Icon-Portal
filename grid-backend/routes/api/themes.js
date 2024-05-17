@@ -27,7 +27,7 @@ router.get('/', (req, res) => {
 router.get('/:i', (req, res) => {
   Theme.find({ name: req.params.i})
     .select('-_id -__v')
-    .then(Theme => res.json(Theme))
+    .then(Theme => res.json(Theme[0]))
     .catch(err => res.status(404).json({ noThemefound: 'No such theme found' }));
 });
 

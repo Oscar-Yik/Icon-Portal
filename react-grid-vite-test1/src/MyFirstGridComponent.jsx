@@ -8,7 +8,7 @@ import getConstants from './Constants';
 
 import "./Background.css"
 
-export default function MyFirstGridComponent({blocks2, delBlocks, showEdit, onUpdateBlocks2, onUpdateDelBlocks, onUpdateShowEdit, getColor}) {
+export default function MyFirstGridComponent({blocks2, delBlocks, showEdit, onUpdateBlocks2, onUpdateDelBlocks, onUpdateShowEdit, colors}) {
 
     const { defaultRowHeight, defaultCols, defaultMaxRows, windowHeight, windowWidth } = getConstants();
 
@@ -56,7 +56,7 @@ export default function MyFirstGridComponent({blocks2, delBlocks, showEdit, onUp
             return <div key={block.i}
                         data-grid={gridItem}
                         className="block"
-                        style={{backgroundColor: getColor("block")}}>
+                        style={{backgroundColor: colors.block}}>
                             <Block block={block} 
                                    removeBlock={(i) => removeBlock(i)}
                                    onUpdateEdit={(i, bool) => updateEdit(i, bool)}/>
@@ -66,7 +66,7 @@ export default function MyFirstGridComponent({blocks2, delBlocks, showEdit, onUp
 
     return (
         <GridContainer width={windowWidth} height={windowHeight}>
-            <GridOverlay color={getColor("grid")}>
+            <GridOverlay color={colors.grid}>
                 <GridLayout
                     className="layout"
                     cols={defaultCols}
@@ -79,7 +79,7 @@ export default function MyFirstGridComponent({blocks2, delBlocks, showEdit, onUp
                 >
                     {generateNewDOM()}
                 </GridLayout>
-                <EditBox showEdit={showEdit} updateEdit={onUpdateShowEdit} blocks2={blocks2} updateBlocks2={onUpdateBlocks2} getColor={getColor}/>
+                <EditBox showEdit={showEdit} updateEdit={onUpdateShowEdit} blocks2={blocks2} updateBlocks2={onUpdateBlocks2} colors={colors}/>
             </GridOverlay>
         </GridContainer>
     );

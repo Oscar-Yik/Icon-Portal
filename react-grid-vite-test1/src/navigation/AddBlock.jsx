@@ -1,13 +1,13 @@
 import React from 'react';
 import "./../Background.css";
 
-export default function AddBlock({ blocks2, addBlocks, nameID, edit, updateBlocks, updateAddBlocks, updateNameID, updateEdit, getColor }) {
+export default function AddBlock({ blocks2, addBlocks, nameID, edit, updateBlocks, updateAddBlocks, updateNameID, updateEdit, colors }) {
     function addBlock() {
         const newBlock2 = { i: `block ${nameID}`, 
                             x: 0, 
                             y: 0, 
                             w: 2, 
-                            h: 4, 
+                            h: 2, 
                             isBounded: true, 
                             url: "https://chat.openai.com"}; 
         updateAddBlocks([...addBlocks, newBlock2]);
@@ -18,8 +18,8 @@ export default function AddBlock({ blocks2, addBlocks, nameID, edit, updateBlock
       }
 
     return (
-        <li className='navItem' style={{backgroundColor: getColor("headerButton"), 
-                                        color: getColor("headerFont")}}>
+        <li className='navItem' style={{backgroundColor: colors.headerButton, 
+                                        color: colors.headerFont}}>
             <button className='navButton' onClick={addBlock}>Add Block</button>
         </li>
     );

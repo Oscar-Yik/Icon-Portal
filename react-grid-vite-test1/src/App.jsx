@@ -6,6 +6,8 @@ import MyFirstGridComponent from './MyFirstGridComponent';
 import AddBlock from './navigation/AddBlock';
 import PopUp from "./PopUp";
 import ColorPalette from './navigation/ColorPalette';
+import ChangeTheme from './navigation/ChangeTheme';
+import SaveTheme from './navigation/SaveTheme';
 
 import 'bootstrap/dist/css/bootstrap.css';
 import './Background.css'
@@ -30,6 +32,7 @@ function App() {
   const [colors, setColors] = useState([]);
   const [dispColPal, setDisColPal] = useState(false);
   const [disTheme, setDisTheme] = useState(false);
+  const [disSave, setDisSave] = useState(false);
   const [theme, setTheme] = useState({});
 
   const navigate = useNavigate();
@@ -40,6 +43,8 @@ function App() {
       let response;
       if (name === "blocks") {
         response = await fetch(`http://localhost:8082/api/blocks`, {method: "GET"}); 
+      } else if (name === "theme"){
+        response = await fetch(`http://localhost:8082/api/themes/current`, {method: "GET"});
       } else {
         response = await fetch(`http://localhost:8082/api/things/${name}`, {method: "GET"}); 
       }
@@ -53,6 +58,11 @@ function App() {
     }
   }
 
+  function saveColors(db_theme) {
+    const { name, backImg, ...color_copy } = db_theme;
+    setColors(color_copy);
+  }
+
   // on startup fetch blocks, background, header color, nameID
   useEffect(() => {
     fetchData("blocks").then(async (data) => {
@@ -64,22 +74,33 @@ function App() {
       setEdit(newShowEdit);
     });
 
-    fetchData("background").then((data) => {
-      setBackImg(data.url);
-    });
+    // fetchData("background").then((data) => {
+    //   setBackImg(data.url);
+    // });
 
-    fetchData("color").then((data) => {
-      setColors(data);
-    });
+    // fetchData("color").then((data) => {
+    //   setColors(data);
+    // });
 
     fetchData("nameID").then((data) => {
       setNameID(parseInt(data.url));
+    });
+
+    fetchData("theme").then((data) => {
+      setTheme(data);
+      saveColors(data);
+      setBackImg(data.backImg);
     });
 
   }, []);
 
   function updateBackground(trash, newImg) {
     setBackImg(newImg);
+    const backImage = {backImg: newImg};
+    const {backI, ...others} = theme;
+    const newTheme = {...backImage, ...others}; 
+    console.log("newTheme: ", newImg);
+    updateTheme(newTheme, "current"); 
   }
 
   async function updateThings(name, state) {
@@ -100,7 +121,7 @@ function App() {
     }
   }
 
-  function saveGrid(){
+  function saveGrid(theme_name){
     for (let j = 0; j < delBlocks.length; j++) {
       console.log("Deleted Block: ", delBlocks[j]);
       requestBlock(delBlocks[j].i, delBlocks[j], "DELETE");
@@ -119,12 +140,18 @@ function App() {
     }
     console.log(blocks2);
     
-    updateThings("backgroundImage", backImg);
+    // updateThings("backgroundImage", backImg);
     // updateThings("header", headerColor);
-    colors.forEach(obj => {
-      updateThings(obj.type, obj.url);
-    })
+    // colors.forEach(obj => {
+    //   updateThings(obj.type, obj.url);
+    // })
     updateThings("nameID", nameID.toString());
+
+    const backImage = {backImg: backImg};
+    const {name, backI, ...oldColors} = theme;
+    const newTheme = {...name, ...backImage, ...colors}; 
+    updateTheme(newTheme, theme_name); 
+    updateTheme(newTheme, "current"); 
   }
 
   async function requestBlock(i, block, type) {
@@ -148,14 +175,27 @@ function App() {
     }
   }
 
+  async function updateTheme(newTheme, i) {
+    try {
+      const header = {'Content-Type' : 'application/json'};
+      const response = await fetch(`http://localhost:8082/api/themes/${i}`, 
+                              {method: 'PUT', headers: header, body: JSON.stringify(newTheme)});
+      if (!response.ok) {
+        throw new Error();
+      }
+    } catch (e) {
+      console.log("Error: cannot update theme ", i, ": ", e.message);
+    }
+  }
+
   function getColor(key) {
-    const index = colors.findIndex(obj => obj.type === key);
-    if (index !== -1) {
-      return colors[index].url;
-    } else {
-      // console.log("cannot get color");
-      return "#FFFFFF";
-    } 
+    // const index = colors.findIndex(obj => obj.type === key);
+    // if (index !== -1) {
+    //   return colors[index].url;
+    // } else {
+    //   // console.log("cannot get color");
+    //   return "#FFFFFF";
+    // } 
   }
 
   return (
@@ -166,43 +206,45 @@ function App() {
         backgroundPosition: 'center'
       }}>
       <ul className="nav" 
-          style={{ backgroundColor: getColor("header") }}>
+          style={{ backgroundColor: colors.header }}>
         <li className="navItem" 
-            style={{backgroundColor: getColor("headerButton"), 
-                    color: getColor("headerFont")}}>
+            style={{backgroundColor: colors.headerButton, 
+                    color: colors.headerFont}}>
           <button className='navLink' 
                   onClick={() => {navigate("/")}}>Home</button>
         </li>
         <li className="navItem" 
-            style={{backgroundColor: getColor("headerButton"), 
-                    color: getColor("headerFont")}}>
-          <button className="navButton" 
-                  type="button" 
-                  onClick={saveGrid}>Save</button>
+            style={{backgroundColor: colors.headerButton, 
+              color: colors.headerFont}}> 
+            {disSave && (
+                <div className='box' 
+                    onClick={() => setDisSave(false)}></div>)}
+                <button className='navButton' 
+                        onClick={() => setDisSave(true)}>Save</button>
         </li>
         {(location.pathname !== '/edit-grid') && (
           <li className="navItem" 
-              style={{backgroundColor: getColor("headerButton"), 
-                      color: getColor("headerFont")}}>
+              style={{backgroundColor: colors.headerButton, 
+                      color: colors.headerFont}}>
             <button className='navLink' 
                     onClick={() => {navigate("/edit-grid")}}>Edit</button>
           </li>
         )}
         {(location.pathname === '/edit-grid') && (
           <AddBlock blocks2={blocks2} addBlocks={addBlocks} nameID={nameID} edit={edit} updateBlocks={setBlocks}
-                    updateAddBlocks={setAddBlocks} updateNameID={setNameID} updateEdit={setEdit} getColor={getColor}/>
+                    updateAddBlocks={setAddBlocks} updateNameID={setNameID} updateEdit={setEdit} colors={colors}/>
         )}
         {(location.pathname === '/edit-grid') && (
           <li className="wideNavItem" 
-              style={{backgroundColor: getColor("headerButton"), 
-                      color: getColor("headerFont")}}> 
+              style={{backgroundColor: colors.headerButton, 
+                      color: colors.headerFont}}> 
             <PopUp backImg={backImg} UpdateBackImg={updateBackground}/>
           </li>
         )}
         {(location.pathname === '/edit-grid') && (
           <li className='navItem' 
-              style={{backgroundColor: getColor("headerButton"), 
-                      color: getColor("headerFont")}}> 
+              style={{backgroundColor: colors.headerButton, 
+                      color: colors.headerFont}}> 
               {dispColPal && (
                   <div className='box' 
                        onClick={() => setDisColPal(false)}></div>)}
@@ -212,8 +254,8 @@ function App() {
         )}
         {(location.pathname === '/edit-grid') && (
           <li className='navItem' 
-              style={{backgroundColor: getColor("headerButton"), 
-                      color: getColor("headerFont")}}> 
+              style={{backgroundColor: colors.headerButton, 
+                      color: colors.headerFont}}> 
               {disTheme && (
                   <div className='box' 
                        onClick={() => setDisTheme(false)}></div>)}
@@ -222,7 +264,8 @@ function App() {
           </li>
         )}
         <ColorPalette display={dispColPal} colors={colors} updateColors={setColors} getColor={getColor}/>
-        <ColorPalette display={disTheme} colors={colors} updateColors={setColors} getColor={getColor}/>
+        <ChangeTheme display={disTheme} colors={colors} theme={theme} updateTheme={setTheme}/>
+        <SaveTheme display={disSave} colors={colors} theme={theme} updateTheme={setTheme} saveGrid={saveGrid}/>
         <li className='navColor'>
         </li>
       </ul>
@@ -236,7 +279,7 @@ function App() {
                                          onUpdateBlocks2={(newBlocks) => setBlocks(newBlocks)}
                                          onUpdateDelBlocks={(del) => setDelBlocks(del)}
                                          onUpdateShowEdit={(newEdit) => setEdit(newEdit)}
-                                         getColor={getColor}/>}
+                                         colors={colors}/>}
         />
       </Routes>
     </div>
