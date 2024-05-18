@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import "./../Background.css";
+import "../utils/Background.css";
 
 export default function ColorPalette({ colors, display, updateColors }) {
 

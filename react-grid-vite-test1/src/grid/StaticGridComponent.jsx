@@ -1,6 +1,6 @@
 import GridLayout from "react-grid-layout"; 
-import getConstants from "./Constants";
-import './Background.css'
+import getConstants from "../utils/Constants";
+import '../utils/Background.css'
 
 export default function StaticGridComponent({blocks2}) {
 

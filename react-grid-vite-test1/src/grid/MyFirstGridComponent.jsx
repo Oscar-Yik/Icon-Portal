@@ -2,11 +2,11 @@ import React from 'react';
 import GridLayout from "react-grid-layout"; 
 import Block from "./Block";
 import EditBox from "./EditBox";
-import GridContainer from './grid_animation/GridContainer';
-import GridOverlay from './grid_animation/GridOverlay';
-import getConstants from './Constants';
+import GridContainer from '../grid_animation/GridContainer';
+import GridOverlay from '../grid_animation/GridOverlay';
+import getConstants from '../utils/Constants';
 
-import "./Background.css"
+import '../utils/Background.css'
 
 export default function MyFirstGridComponent({blocks2, delBlocks, showEdit, onUpdateBlocks2, onUpdateDelBlocks, onUpdateShowEdit, colors}) {
 

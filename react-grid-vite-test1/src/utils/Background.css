@@ -169,6 +169,20 @@
   height: 254px;
 }
 
+.background-theme {
+  width: 500px; 
+  position: fixed;
+  top: 55px;
+  z-index: 1;
+  left: 300px;
+  height: 30px;
+}
+
+.background-text {
+  font-family: 'Verdana', sans-serif;
+  font-size: 14px;
+}
+
 .color-palette-item,
 .theme-item {
   position: absolute;

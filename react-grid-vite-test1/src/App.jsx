@@ -1,16 +1,17 @@
 // export default App
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
-import StaticGridComponent from './StaticGridComponent';
-import MyFirstGridComponent from './MyFirstGridComponent';
+import StaticGridComponent from './grid/StaticGridComponent';
+import MyFirstGridComponent from './grid/MyFirstGridComponent';
 import AddBlock from './navigation/AddBlock';
-import PopUp from "./PopUp";
 import ColorPalette from './navigation/ColorPalette';
 import ChangeTheme from './navigation/ChangeTheme';
 import SaveTheme from './navigation/SaveTheme';
+import HeaderPopup from './navigation/HeaderPopup';
+import ChangeBackground from './navigation/ChangeBackground';
 
 import 'bootstrap/dist/css/bootstrap.css';
-import './Background.css'
+import './utils/Background.css'
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 import '@fortawesome/fontawesome-free/css/all.css';
@@ -22,17 +23,13 @@ function App() {
   const [addBlocks, setAddBlocks] = useState([]);
 
   const [backImg, setBackImg] = useState("");
-  // https://fiverr-res.cloudinary.com/images/q_auto,f_auto/gigs/129325364/original/afaddcb9d7dfaaf5bff7ef04101935814665ac16/design-an-attractive-background-for-your-website.png
-  // https://images.saymedia-content.com/.image/t_share/MTc4NzM1OTc4MzE0MzQzOTM1/how-to-create-cool-website-backgrounds-the-ultimate-guide.png
-  // https://wallpapercave.com/wp/wp13129045.jpg
-  // https://images8.alphacoders.com/970/970395.jpg
-
   const [edit, setEdit] = useState([]);
   const [nameID, setNameID] = useState(0);
   const [colors, setColors] = useState([]);
   const [dispColPal, setDisColPal] = useState(false);
   const [disTheme, setDisTheme] = useState(false);
   const [disSave, setDisSave] = useState(false);
+  const [disBack, setDisBack] = useState(false);
   const [theme, setTheme] = useState({});
 
   const navigate = useNavigate();
@@ -74,19 +71,12 @@ function App() {
       setEdit(newShowEdit);
     });
 
-    // fetchData("background").then((data) => {
-    //   setBackImg(data.url);
-    // });
-
-    // fetchData("color").then((data) => {
-    //   setColors(data);
-    // });
-
     fetchData("nameID").then((data) => {
       setNameID(parseInt(data.url));
     });
 
     fetchData("theme").then((data) => {
+      console.log("theme changed: ", data);
       setTheme(data);
       saveColors(data);
       setBackImg(data.backImg);
@@ -94,13 +84,20 @@ function App() {
 
   }, []);
 
-  function updateBackground(trash, newImg) {
+  useEffect(() => {
+    const {name, backImg: newImg, ...other_colors} = theme; 
     setBackImg(newImg);
+    setColors(other_colors);
+  }, [theme])
+
+  function updateBackground(trash, newImg) {
+    //setBackImg(newImg);
     const backImage = {backImg: newImg};
-    const {backI, ...others} = theme;
+    const {backImg: oldImg, ...others} = theme;
     const newTheme = {...backImage, ...others}; 
     console.log("newTheme: ", newImg);
-    updateTheme(newTheme, "current"); 
+    setTheme(newTheme);
+    //updateTheme(newTheme, "current"); 
   }
 
   async function updateThings(name, state) {
@@ -183,19 +180,18 @@ function App() {
       if (!response.ok) {
         throw new Error();
       }
+      //console.log("Theme updated: ", newTheme);
     } catch (e) {
       console.log("Error: cannot update theme ", i, ": ", e.message);
     }
   }
 
-  function getColor(key) {
-    // const index = colors.findIndex(obj => obj.type === key);
-    // if (index !== -1) {
-    //   return colors[index].url;
-    // } else {
-    //   // console.log("cannot get color");
-    //   return "#FFFFFF";
-    // } 
+  function chooseTheme(newTheme) {
+    setTheme(newTheme);
+    console.log("reached: ", newTheme);
+    const dbTheme = {...newTheme};
+    dbTheme.name = "current";
+    updateTheme(dbTheme, "current");
   }
 
   return (
@@ -213,15 +209,7 @@ function App() {
           <button className='navLink' 
                   onClick={() => {navigate("/")}}>Home</button>
         </li>
-        <li className="navItem" 
-            style={{backgroundColor: colors.headerButton, 
-              color: colors.headerFont}}> 
-            {disSave && (
-                <div className='box' 
-                    onClick={() => setDisSave(false)}></div>)}
-                <button className='navButton' 
-                        onClick={() => setDisSave(true)}>Save</button>
-        </li>
+        <HeaderPopup name="Save" display={disSave} updateDisplay={setDisSave} colors={colors}/>
         {(location.pathname !== '/edit-grid') && (
           <li className="navItem" 
               style={{backgroundColor: colors.headerButton, 
@@ -235,37 +223,26 @@ function App() {
                     updateAddBlocks={setAddBlocks} updateNameID={setNameID} updateEdit={setEdit} colors={colors}/>
         )}
         {(location.pathname === '/edit-grid') && (
-          <li className="wideNavItem" 
-              style={{backgroundColor: colors.headerButton, 
-                      color: colors.headerFont}}> 
-            <PopUp backImg={backImg} UpdateBackImg={updateBackground}/>
-          </li>
+            <li className='wideNavItem' 
+                style={{backgroundColor: colors.headerButton, 
+                        color: colors.headerFont}}> 
+                {disBack && (
+                    <div className='box' 
+                        onClick={() => setDisBack(false)}></div>)}
+                    <button className='navButton' 
+                            onClick={() => setDisBack(true)}>Change Background</button>
+            </li>
+          )}
+        {(location.pathname === '/edit-grid') && (
+          <HeaderPopup name="Color Palette" display={dispColPal} updateDisplay={setDisColPal} colors={colors}/>
         )}
         {(location.pathname === '/edit-grid') && (
-          <li className='navItem' 
-              style={{backgroundColor: colors.headerButton, 
-                      color: colors.headerFont}}> 
-              {dispColPal && (
-                  <div className='box' 
-                       onClick={() => setDisColPal(false)}></div>)}
-                  <button className='navButton' 
-                          onClick={() => setDisColPal(true)}>Color Palette</button>
-          </li>
+          <HeaderPopup name="Change Theme" display={disTheme} updateDisplay={setDisTheme} colors={colors}/>
         )}
-        {(location.pathname === '/edit-grid') && (
-          <li className='navItem' 
-              style={{backgroundColor: colors.headerButton, 
-                      color: colors.headerFont}}> 
-              {disTheme && (
-                  <div className='box' 
-                       onClick={() => setDisTheme(false)}></div>)}
-                  <button className='navButton' 
-                          onClick={() => setDisTheme(true)}>Change Theme</button>
-          </li>
-        )}
-        <ColorPalette display={dispColPal} colors={colors} updateColors={setColors} getColor={getColor}/>
-        <ChangeTheme display={disTheme} colors={colors} theme={theme} updateTheme={setTheme}/>
+        <ColorPalette display={dispColPal} colors={colors} updateColors={setColors}/>
+        <ChangeTheme display={disTheme} colors={colors} theme={theme} updateTheme={chooseTheme}/>
         <SaveTheme display={disSave} colors={colors} theme={theme} updateTheme={setTheme} saveGrid={saveGrid}/>
+        <ChangeBackground display={disBack} colors={colors} backImg={backImg} updateBackImg={updateBackground}/>
         <li className='navColor'>
         </li>
       </ul>

@@ -1,5 +1,5 @@
 import React from 'react';
-import "./../Background.css";
+import "../utils/Background.css";
 
 export default function AddBlock({ blocks2, addBlocks, nameID, edit, updateBlocks, updateAddBlocks, updateNameID, updateEdit, colors }) {
     function addBlock() {

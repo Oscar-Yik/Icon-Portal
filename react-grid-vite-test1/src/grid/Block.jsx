@@ -1,9 +1,9 @@
 import React from 'react';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import getConstants from './Constants';
+import getConstants from '../utils/Constants';
 
-import "./Background.css"
+import '../utils/Background.css'
 
 export default function Block ({block, removeBlock, onUpdateEdit}) {
     

@@ -1,8 +1,8 @@
 import React from 'react';
-import EditableTextItem from "./EditableText";
-import getConstants from './Constants';
+import EditableTextItem from "../utils/EditableText";
+import getConstants from '../utils/Constants';
 
-import "./Background.css"
+import '../utils/Background.css'
 
 export default function EditBox({showEdit, updateEdit, blocks2, updateBlocks2, colors}) {
 
@@ -50,7 +50,8 @@ export default function EditBox({showEdit, updateEdit, blocks2, updateBlocks2, c
                                 <EditableTextItem key={block.i} 
                                                   initialText={block.url} 
                                                   id={block.i} 
-                                                  onStateChange={updateInfo}/>
+                                                  onStateChange={updateInfo}
+                                                  colors={colors}/>
                                 <div>Block ID: {block.i}</div>
                         </div>
                         <div className="left-arrow" 

@@ -1,7 +1,8 @@
 // EditableTextItem.js hello
 import React, { useState, useRef, useEffect } from 'react';
+import "./Background.css";
 
-const EditableTextItem = ({ initialText, id, onStateChange }) => {
+const EditableTextItem = ({ initialText, id, onStateChange, colors }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [text, setText] = useState(initialText);
   const inputRef = useRef(null);
@@ -38,7 +39,9 @@ const EditableTextItem = ({ initialText, id, onStateChange }) => {
           ref={inputRef}
         />
       ) : (
-        <span>{text}</span>
+        (id === "Background") ? (<span className='background-text'
+                                       style={{color: colors.headerFont}}>{text}</span>)
+                              : (<span className='background-text'>{text}</span>)
       )}
     </div>
   );
