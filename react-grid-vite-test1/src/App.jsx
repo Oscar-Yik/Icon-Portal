@@ -1,8 +1,8 @@
 // export default App
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
-import StaticGridComponent from './grid/StaticGridComponent';
-import MyFirstGridComponent from './grid/MyFirstGridComponent';
+import StaticGridComponent from './layout/StaticGridComponent';
+import MyFirstGridComponent from './layout/MyFirstGridComponent';
 import AddBlock from './navigation/AddBlock';
 import ColorPalette from './navigation/ColorPalette';
 import ChangeTheme from './navigation/ChangeTheme';

@@ -2,8 +2,8 @@ import React from 'react';
 import GridLayout from "react-grid-layout"; 
 import Block from "./Block";
 import EditBox from "./EditBox";
-import GridContainer from '../grid_animation/GridContainer';
-import GridOverlay from '../grid_animation/GridOverlay';
+import GridContainer from '../animations/GridContainer';
+import GridOverlay from '../animations/GridOverlay';
 import getConstants from '../utils/Constants';
 
 import '../utils/Background.css'
