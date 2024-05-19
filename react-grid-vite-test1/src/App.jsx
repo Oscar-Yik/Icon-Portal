@@ -9,6 +9,7 @@ import ChangeTheme from './navigation/ChangeTheme';
 import SaveTheme from './navigation/SaveTheme';
 import HeaderPopup from './navigation/HeaderPopup';
 import ChangeBackground from './navigation/ChangeBackground';
+import AddWidget from './navigation/AddWidget';
 
 import 'bootstrap/dist/css/bootstrap.css';
 import './utils/Background.css'
@@ -30,6 +31,7 @@ function App() {
   const [disTheme, setDisTheme] = useState(false);
   const [disSave, setDisSave] = useState(false);
   const [disBack, setDisBack] = useState(false);
+  const [disWid, setDisWid] = useState(false);
   const [theme, setTheme] = useState({});
 
   const navigate = useNavigate();
@@ -239,10 +241,17 @@ function App() {
         {(location.pathname === '/edit-grid') && (
           <HeaderPopup name="Change Theme" display={disTheme} updateDisplay={setDisTheme} colors={colors}/>
         )}
+        {(location.pathname === '/edit-grid') && (
+          <HeaderPopup name="Add Widget" display={disWid} updateDisplay={setDisWid} colors={colors}/>
+        )}
         <ColorPalette display={dispColPal} colors={colors} updateColors={setColors}/>
         <ChangeTheme display={disTheme} colors={colors} theme={theme} updateTheme={chooseTheme}/>
         <SaveTheme display={disSave} colors={colors} theme={theme} updateTheme={setTheme} saveGrid={saveGrid}/>
         <ChangeBackground display={disBack} colors={colors} backImg={backImg} updateBackImg={updateBackground}/>
+        <AddWidget display={disWid} colors={colors} blocks2={blocks2} addBlocks={addBlocks} edit={edit} 
+                   updateBlocks={setBlocks} updateAddBlocks={setAddBlocks} updateEdit={setEdit}/>
+
+        {/* keep this list item or else header buttons become misaligned*/}
         <li className='navColor'>
         </li>
       </ul>

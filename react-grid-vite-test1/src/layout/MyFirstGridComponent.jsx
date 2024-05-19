@@ -4,11 +4,12 @@ import Block from "./Block";
 import EditBox from "./EditBox";
 import GridContainer from '../animations/GridContainer';
 import GridOverlay from '../animations/GridOverlay';
+import VideoDownloader from './VideoDownloader';
 import getConstants from '../utils/Constants';
 
 import '../utils/Background.css'
 
-export default function MyFirstGridComponent({blocks2, delBlocks, showEdit, onUpdateBlocks2, onUpdateDelBlocks, onUpdateShowEdit, colors}) {
+export default function MyFirstGridComponent({blocks2, delBlocks, showEdit, onUpdateBlocks2, onUpdateDelBlocks, onUpdateShowEdit, colors }) {
 
     const { defaultRowHeight, defaultCols, defaultMaxRows, windowHeight, windowWidth } = getConstants();
 
@@ -53,7 +54,19 @@ export default function MyFirstGridComponent({blocks2, delBlocks, showEdit, onUp
             let index = block.i;
             let edit = showEdit.find(item => item.i === index);
             let gridItem = grid.find(item => item.i === index);
-            return <div key={block.i}
+            if (block.i === "Youtube") {
+                gridItem.isResizable = false;
+                return <div key={block.i}
+                        data-grid={gridItem}
+                        className="block"
+                        style={{backgroundColor: colors.block}}>
+                            <VideoDownloader block={block} 
+                                             removeBlock={(i) => removeBlock(i)}
+                                             onUpdateEdit={(i, bool) => updateEdit(i, bool)}
+                                             colors={colors}/>
+                    </div>
+            } else { 
+                return <div key={block.i}
                         data-grid={gridItem}
                         className="block"
                         style={{backgroundColor: colors.block}}>
@@ -61,6 +74,7 @@ export default function MyFirstGridComponent({blocks2, delBlocks, showEdit, onUp
                                    removeBlock={(i) => removeBlock(i)}
                                    onUpdateEdit={(i, bool) => updateEdit(i, bool)}/>
                     </div>
+            }
         })
     }
 
