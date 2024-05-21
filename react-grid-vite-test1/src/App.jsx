@@ -256,7 +256,7 @@ function App() {
         </li>
       </ul>
       <Routes>
-        <Route path="/" element={<StaticGridComponent blocks2={blocks2}/>} />
+        <Route path="/" element={<StaticGridComponent blocks2={blocks2} colors={colors} updateEdit={(newEdit) => setEdit(newEdit)}/>} />
         <Route
           path="/edit-grid"
           element={<MyFirstGridComponent blocks2={blocks2} 

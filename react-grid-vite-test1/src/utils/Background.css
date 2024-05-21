@@ -246,7 +246,6 @@
   height: 10px;
   border-top-left-radius: 5px;
   border-top-right-radius: 5px;
-  z-index: 1;
 }
 
 .youtubeDown-image {
@@ -270,7 +269,8 @@
 }
 
 .loading-icon, 
-.failed-icon {
+.failed-icon, 
+.download-icon {
   position: absolute;
   right: 4px;
   bottom: 4px;
@@ -283,6 +283,13 @@
   width: 25px;
   height: 25px;
   animation: spin 2s linear infinite;
+}
+
+.download-icon {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  z-index: 2;
 }
 
 @keyframes spin {
