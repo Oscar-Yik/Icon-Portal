@@ -1,20 +1,29 @@
-# Layer 1: Telling Docker to use the node:17-alpine image as the base image for the container.
-FROM node:17-alpine
+# Stage-1 & specify a name 'builder'
+FROM  node:latest AS builder
 
-# Layer 2: Telling Docker to create a directory called `app` in the container and set it as the working directory.
-WORKDIR /react-grid-vite-test1
+# Create a directory  and go to the directory 
+WORKDIR /app
 
-# Layer 3: Copying the package.json file from the root of the project to the `app` directory in the container.
+# Copy the package.json file to my current directory to install the necessary dependence  
 COPY package.json .
 
-# Layer 4: Installing the dependencies listed in the package.json file.
+# Install the dependence
 RUN npm install
 
-# Layer 5: Copying all the files from the root of the project to the `app` directory in the container.
+# Copy other files to my current directory
 COPY . .
 
-# Layer 6: Telling Docker that the container will listen on port 3000.
-EXPOSE 5173
+# Build and optimize static file
+RUN npm run build
 
-# Layer 7: Telling Docker to run the `npm start` command when the container is started.
-CMD ["npm", "run", "dev"]
+# Stage-2
+FROM nginx:1.25.2-alpine-slim
+
+# Copy the static file to my Nginx folder to serve static contain
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+# Open the port to react
+EXPOSE 80
+
+# Run nginx in the foreground
+CMD ["nginx", "-g", "daemon off;"]
