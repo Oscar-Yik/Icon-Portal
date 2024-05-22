@@ -27,19 +27,6 @@ export default function VideoDownloader ({block, removeBlock, onUpdateEdit, colo
     }
 
     async function downloadSingleVideo(video) {
-        // console.log("Download one video: ", videos);
-        // for (let i = 0; i < videos.length; i++) {
-        //     console.log("Download one video");
-        //     const element = document.createElement("a");
-        //     // element.href = "./../../../python-flask\Videos\百年樹木.mp4";
-        //     // C:\Users\User\OneDrive\Documents\Gogo Stuff\Coding Projects\Grid-Thing\python-flask\Videos\Connect.mp4
-        //     element.href = `${window.location.origin}/python-flask/Videos/${videos[0]}`;
-        //     // element.download = videos[0];
-
-        //     document.body.appendChild(element);
-        //     element.click();
-        //     document.body.removeChild(element);
-        // }
         try {
             const response = await fetch(`http://localhost:3001/youtube?title=${video}`, 
                                     {method: 'GET'});
@@ -47,7 +34,7 @@ export default function VideoDownloader ({block, removeBlock, onUpdateEdit, colo
             const objectURL = window.URL.createObjectURL(blob);
             const element = document.createElement('a');
             element.href = objectURL;
-            // element.setAttribute('download', video)
+            element.setAttribute('download', video)
             // document.body.appendChild(objectURL);
             element.click();
             // element.parentNode.removeChild(objectURL);

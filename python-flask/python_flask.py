@@ -1,3 +1,4 @@
+import os
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 from downloader import download_playlist, download_single_video
@@ -33,7 +34,13 @@ def getVideo():
     try: 
         # send_from_directory if this doesn't work
         # C:\Users\User\OneDrive\Documents\Gogo Stuff\Coding Projects\Grid-Thing\python-flask\Videos
-        return send_file("C:/Users/User/OneDrive/Documents/Gogo Stuff/Coding Projects/Grid-Thing/python-flask/Videos/" + data, as_attachment=True, download_name=data)
+        # C:\Users\oscar\Documents\Entertainment\Coding Ideas\Grid-Thing\python-flask\Videos
+        # "C:/Users/oscar/Documents/Entertainment/Coding Ideas/Grid-Thing/python-flask/Videos/"
+        root_dir = os.path.dirname(os.path.abspath(__file__))
+        # Construct the full path to the video file
+        video_path = os.path.join(root_dir, 'Videos', data)
+        print(video_path)
+        return send_file(video_path, as_attachment=True, download_name=data)
     except Exception as e: 
         return str(e)
 
