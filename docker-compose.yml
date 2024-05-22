@@ -1,3 +1,6 @@
+# Use this one instead
+# https://medium.com/@bjnandi/containerize-your-full-stack-web-application-mern-with-docker-compose-4900156ba9dd#:~:text=For%20the%20dockerize%20a%20full,yml%20file.
+
 # The version of the docker-compose.
 version: "3.8"
 # Telling docker-compose to build the client and server images and run them in containers.
