@@ -1,4 +1,6 @@
 // export default App
+//require('dotenv').config({ path: __dirname + "/../../.env" });
+
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import StaticGridComponent from './layout/StaticGridComponent';
@@ -37,15 +39,18 @@ function App() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const env_HOSTNAME = import.meta.env.VITE_HOSTNAME;
+
   async function fetchData(name) {
     try {
+      console.log("call: ", `http://${env_HOSTNAME}:8082/api/blocks`);
       let response;
       if (name === "blocks") {
-        response = await fetch(`http://localhost:8082/api/blocks`, {method: "GET"}); 
+        response = await fetch(`http://${env_HOSTNAME}:8082/api/blocks`, {method: "GET"}); 
       } else if (name === "theme"){
-        response = await fetch(`http://localhost:8082/api/themes/current`, {method: "GET"});
+        response = await fetch(`http://${env_HOSTNAME}:8082/api/themes/current`, {method: "GET"});
       } else {
-        response = await fetch(`http://localhost:8082/api/things/${name}`, {method: "GET"}); 
+        response = await fetch(`http://${env_HOSTNAME}:8082/api/things/${name}`, {method: "GET"}); 
       }
       if (!response.ok) {
         console.log("Bad Query: ", name);
@@ -64,6 +69,8 @@ function App() {
 
   // on startup fetch blocks, background, header color, nameID
   useEffect(() => {
+    console.log("call: ", `http://${env_HOSTNAME}:8082/api/blocks`);
+
     fetchData("blocks").then(async (data) => {
       setBlocks(data);
       let newShowEdit = [];
@@ -107,7 +114,7 @@ function App() {
       const jsonBody = {"url": state}; 
       const header = {'Content-Type' : 'application/json'};
       console.log(jsonBody); 
-      const response = await fetch(`http://localhost:8082/api/things/${name}`, 
+      const response = await fetch(`http://${env_HOSTNAME}:8082/api/things/${name}`, 
                                    {method: 'PUT', headers: header, body: JSON.stringify(jsonBody)});
       if (!response.ok) {
         console.log("Bad Query: ", name);
@@ -158,10 +165,10 @@ function App() {
       const header = {'Content-Type' : 'application/json'};
       let response;
       if (type === "POST") {
-        response = await fetch("http://localhost:8082/api/blocks", 
+        response = await fetch(`http://${env_HOSTNAME}:8082/api/blocks`, 
                               {method: 'POST', headers: header, body: JSON.stringify(block)});
       } else {
-        response = await fetch(`http://localhost:8082/api/blocks/${i}`, 
+        response = await fetch(`http://${env_HOSTNAME}:8082/api/blocks/${i}`, 
                               {method: type, headers: header, body: JSON.stringify(block)});
       }
       if (!response.ok) {
@@ -177,7 +184,7 @@ function App() {
   async function updateTheme(newTheme, i) {
     try {
       const header = {'Content-Type' : 'application/json'};
-      const response = await fetch(`http://localhost:8082/api/themes/${i}`, 
+      const response = await fetch(`http://${env_HOSTNAME}:8082/api/themes/${i}`, 
                               {method: 'PUT', headers: header, body: JSON.stringify(newTheme)});
       if (!response.ok) {
         throw new Error();

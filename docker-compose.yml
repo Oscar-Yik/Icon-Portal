@@ -32,8 +32,21 @@ services:
     container_name: frontend
     ports:
       - "80:80"
+    env_file: ./react-grid-vite-test1/.env  # Reference the specific .env file
     depends_on:
       - server
+
+  # Widget service
+  widget:
+    build:
+      context: ./python-flask
+      dockerfile: Dockerfile
+      
+    container_name: python-flask
+    ports:
+      - "3001:3001"
+    depends_on:
+      - mongodb
 
   # Database service
   mongodb:

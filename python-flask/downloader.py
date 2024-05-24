@@ -49,7 +49,10 @@ def download_playlist (playlist_name):
     return {"status": True, "title": playlist}
 
 def download_single_video (url):
-    yt = YouTube(url)
+    try: 
+        yt = YouTube(url)
+    except AttributeError: 
+        return {"status": False, "title": "couldn't scrape video" + yt.streams[0].title}
     try: 
         yt.streams.first().download('./Videos')
     except pytube.exceptions.VideoUnavailable:
@@ -59,4 +62,4 @@ def download_single_video (url):
 
 
 #download_playlist('Memes')
-#download_playlist('Piano')
+download_playlist('Piano')

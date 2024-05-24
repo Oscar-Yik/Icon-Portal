@@ -1,3 +1,5 @@
+//require('dotenv').config({ path: __dirname + "/../../../.env" });
+
 import React, { useState } from 'react';
 import EditableTextItem from '../utils/EditableText';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -20,6 +22,8 @@ export default function VideoDownloader ({block, removeBlock, onUpdateEdit, colo
     const [pathes, setPathes] = useState([]);
     const { defaultRowHeight, colWidth } = getConstants();
 
+    const env_HOSTNAME = import.meta.env.VITE_HOSTNAME;
+
     function downloadVideo() {
         videos.forEach((video) => {
             downloadSingleVideo(video);
@@ -28,7 +32,7 @@ export default function VideoDownloader ({block, removeBlock, onUpdateEdit, colo
 
     async function downloadSingleVideo(video) {
         try {
-            const response = await fetch(`http://localhost:3001/youtube?title=${video}`, 
+            const response = await fetch(`http://${env_HOSTNAME}:3001/youtube?title=${video}`, 
                                     {method: 'GET'});
             const blob = await response.blob();
             const objectURL = window.URL.createObjectURL(blob);
@@ -67,7 +71,7 @@ export default function VideoDownloader ({block, removeBlock, onUpdateEdit, colo
         try {
             const youtube_url = { url: link };
             const header = {'Content-Type' : 'application/json'};
-            const response = await fetch("http://localhost:3001/youtube?playlist=false", 
+            const response = await fetch(`http://${env_HOSTNAME}:3001/youtube?playlist=false`, 
                                     {method: 'POST', headers: header, body: JSON.stringify(youtube_url)});
             if (!response.ok) {
                 throw new Error();

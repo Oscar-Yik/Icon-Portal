@@ -4,7 +4,7 @@ from flask_cors import CORS
 from downloader import download_playlist, download_single_video
 
 app = Flask(__name__)
-CORS(app, origins=['http://localhost:5173'])
+CORS(app)
 
 # with app.app_context():
 #     download_playlist('Piano')
