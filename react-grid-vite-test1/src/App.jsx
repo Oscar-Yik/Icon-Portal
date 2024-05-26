@@ -252,8 +252,8 @@ function App() {
           <HeaderPopup name="Add Widget" display={disWid} updateDisplay={setDisWid} colors={colors}/>
         )}
         <ColorPalette display={dispColPal} colors={colors} updateColors={setColors}/>
-        <ChangeTheme display={disTheme} colors={colors} theme={theme} updateTheme={chooseTheme}/>
-        <SaveTheme display={disSave} colors={colors} theme={theme} updateTheme={setTheme} saveGrid={saveGrid}/>
+        <ChangeTheme display={disTheme} colors={colors} theme={theme} updateTheme={chooseTheme} env_HOSTNAME={env_HOSTNAME}/>
+        <SaveTheme display={disSave} colors={colors} theme={theme} updateTheme={setTheme} saveGrid={saveGrid} env_HOSTNAME={env_HOSTNAME}/>
         <ChangeBackground display={disBack} colors={colors} backImg={backImg} updateBackImg={updateBackground}/>
         <AddWidget display={disWid} colors={colors} blocks2={blocks2} addBlocks={addBlocks} edit={edit} 
                    updateBlocks={setBlocks} updateAddBlocks={setAddBlocks} updateEdit={setEdit}/>

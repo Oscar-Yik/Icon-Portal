@@ -1,5 +1,5 @@
 // db.js
-require('dotenv').config({ path: __dirname + "/../../.env" });
+require('dotenv').config({ path: __dirname + "/../.env" });
 
 const mongoose = require("mongoose");
 const db =

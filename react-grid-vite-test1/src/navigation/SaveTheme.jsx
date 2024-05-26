@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import "../utils/Background.css";
 
-export default function SaveTheme({ colors, display, theme, updateTheme, saveGrid }) {
+export default function SaveTheme({ colors, display, theme, updateTheme, saveGrid, env_HOSTNAME }) {
 
     const [allThemes, setAllThemes] = useState([]);
 
@@ -13,7 +13,7 @@ export default function SaveTheme({ colors, display, theme, updateTheme, saveGri
 
     async function fetchThemes() {
         try {
-            const response = await fetch(`http://localhost:8082/api/themes`, {method: "GET"});
+            const response = await fetch(`http://${env_HOSTNAME}:8082/api/themes`, {method: "GET"});
             if (!response.ok) {
               console.log("Bad Query: fetchThemes()");
             }

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import "../utils/Background.css";
 
-export default function ChangeTheme({ colors, display, theme, updateTheme }) {
+export default function ChangeTheme({ colors, display, theme, updateTheme, env_HOSTNAME }) {
 
     const [allThemes, setAllThemes] = useState([]);
-
+    
     useEffect(() => {
         if (display) {
             fetchThemes().then(data => setAllThemes(data));
@@ -13,7 +13,7 @@ export default function ChangeTheme({ colors, display, theme, updateTheme }) {
 
     async function fetchThemes() {
         try {
-            const response = await fetch(`http://localhost:8082/api/themes`, {method: "GET"});
+            const response = await fetch(`http://${env_HOSTNAME}:8082/api/themes`, {method: "GET"});
             if (!response.ok) {
               console.log("Bad Query: fetchThemes()");
             }
