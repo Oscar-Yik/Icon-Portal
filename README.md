@@ -1,6 +1,7 @@
 ### README 
 
+### Structural Diagram 
+![Structural Diagram](assets\Grid-Thing_Structural_Diagram.svg "Structural Diagram")
 
-## Set-Up 
-- setup Virtual Environemnt for python and cd to ./Grid-Thing/python-flask/setup, then run `python setup.py`
-- cd to ./Grid-Thing/react-grid-vite-test1, then run `npm install` and `npm install react-router-dom`
+## Link 
+- http://18.224.18.89
