@@ -73,7 +73,7 @@ function App() {
     // getIcon("https://snyk.io/advisor/npm-package/http-proxy-middleware/functions/http-proxy-middleware.createProxyMiddleware").then(icon => {
     //   console.log("Got icon: ", icon);
     // });
-
+    console.log("use effected :D :D :D");
     fetchData("blocks").then(async (data) => {
       console.log("blocks: ", data);
       setBlocks(data);
@@ -85,7 +85,7 @@ function App() {
     });
 
     fetchData("nameID").then((data) => {
-      setNameID(parseInt(data.url));
+      setNameID(parseInt(data.value));
     });
 
     fetchData("theme").then((data) => {
@@ -132,6 +132,9 @@ function App() {
   }
 
   function saveGrid(theme_name){
+    // console.log("addBlocks: ", addBlocks); 
+    // console.log("delBlocks: ", delBlocks); 
+    // console.log("blocks2: ", blocks2); 
     for (let j = 0; j < delBlocks.length; j++) {
       console.log("Deleted Block: ", delBlocks[j]);
       requestBlock(delBlocks[j].data_grid.i, delBlocks[j], "DELETE");
