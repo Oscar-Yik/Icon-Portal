@@ -8,17 +8,11 @@ export default function StaticGridComponent({blocks2, colors, updateEdit}) {
     const { defaultRowHeight, defaultCols, defaultMaxRows, windowHeight, windowWidth } = getConstants();
 
     function generateNewDOM() {
-        let grid = blocks2.map(obj => {
-            const {url, ...rest} = obj;
-            return rest; 
-        })
         return blocks2.map(block => {
-            let index = block.i;
-            let gridItem = grid.find(item => item.i === index);
-            if (block.i === "Youtube") {
-                gridItem.isResizable = false;
-                return <div key={block.i}
-                        data-grid={gridItem}
+            if (block.data_grid.i === "Youtube") {
+                block.data_grid.isResizable = false;
+                return <div key={block.data_grid.i}
+                        data-grid={block.data_grid}
                         className="block"
                         style={{backgroundColor: colors.block}}>
                             <VideoDownloader block={block} 
@@ -27,18 +21,18 @@ export default function StaticGridComponent({blocks2, colors, updateEdit}) {
                                              colors={colors}/>
                     </div>
             } else { 
-                return <div key={block.i}
-                            data-grid={gridItem}
+                return <div key={block.data_grid.i}
+                            data-grid={block.data_grid}
                             className="static-block">
-                                <div width={block.w*defaultRowHeight} 
-                                    height={block.h*defaultRowHeight}>
+                                <div width={block.data_grid.w*defaultRowHeight} 
+                                    height={block.data_grid.h*defaultRowHeight}>
                                     <a target="_blank" 
-                                    href={block.url}
+                                    href={block.link}
                                     className='link'>
-                                        <img src={block.url + "/favicon.ico"} 
+                                        <img src={block.img_url} 
                                             alt="Dinosaur" 
-                                            width={block.w*defaultRowHeight} 
-                                            height={block.h*defaultRowHeight}>
+                                            width={block.data_grid.w*defaultRowHeight} 
+                                            height={block.data_grid.h*defaultRowHeight}>
                                         </img>
                                     </a>
                                 </div>

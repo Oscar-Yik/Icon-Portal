@@ -1,6 +1,4 @@
 // export default App
-//require('dotenv').config({ path: __dirname + "/../../.env" });
-
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import StaticGridComponent from './layout/StaticGridComponent';
@@ -12,6 +10,7 @@ import SaveTheme from './navigation/SaveTheme';
 import HeaderPopup from './navigation/HeaderPopup';
 import ChangeBackground from './navigation/ChangeBackground';
 import AddWidget from './navigation/AddWidget';
+import getIcon from './utils/GetIcons';
 
 import 'bootstrap/dist/css/bootstrap.css';
 import './utils/Background.css'
@@ -43,14 +42,14 @@ function App() {
 
   async function fetchData(name) {
     try {
-      console.log("call: ", `http://${env_HOSTNAME}:8082/api/blocks`);
+      // console.log("call: ", `http://${env_HOSTNAME}:8092/api/blocks`);
       let response;
       if (name === "blocks") {
-        response = await fetch(`http://${env_HOSTNAME}:8082/api/blocks`, {method: "GET"}); 
+        response = await fetch(`http://${env_HOSTNAME}:8092/api/blocks`, {method: "GET"}); 
       } else if (name === "theme"){
         response = await fetch(`http://${env_HOSTNAME}:8082/api/themes/current`, {method: "GET"});
       } else {
-        response = await fetch(`http://${env_HOSTNAME}:8082/api/things/${name}`, {method: "GET"}); 
+        response = await fetch(`http://${env_HOSTNAME}:8092/api/units/${name}`, {method: "GET"}); 
       }
       if (!response.ok) {
         console.log("Bad Query: ", name);
@@ -69,13 +68,18 @@ function App() {
 
   // on startup fetch blocks, background, header color, nameID
   useEffect(() => {
-    console.log("call: ", `http://${env_HOSTNAME}:8082/api/blocks`);
+    // console.log("call: ", `http://${env_HOSTNAME}:8082/api/blocks`);
+
+    // getIcon("https://snyk.io/advisor/npm-package/http-proxy-middleware/functions/http-proxy-middleware.createProxyMiddleware").then(icon => {
+    //   console.log("Got icon: ", icon);
+    // });
 
     fetchData("blocks").then(async (data) => {
+      console.log("blocks: ", data);
       setBlocks(data);
       let newShowEdit = [];
       for (let i = 0; i < data.length; i++) {
-          newShowEdit.push({i: data[i].i, status: false});
+          newShowEdit.push({i: data[i].data_grid.i, status: false});
       }
       setEdit(newShowEdit);
     });
@@ -111,10 +115,10 @@ function App() {
 
   async function updateThings(name, state) {
     try {
-      const jsonBody = {"url": state}; 
+      const jsonBody = { "key": name, "value": state }; 
       const header = {'Content-Type' : 'application/json'};
       console.log(jsonBody); 
-      const response = await fetch(`http://${env_HOSTNAME}:8082/api/things/${name}`, 
+      const response = await fetch(`http://${env_HOSTNAME}:8092/api/units/${name}`, 
                                    {method: 'PUT', headers: header, body: JSON.stringify(jsonBody)});
       if (!response.ok) {
         console.log("Bad Query: ", name);
@@ -130,19 +134,19 @@ function App() {
   function saveGrid(theme_name){
     for (let j = 0; j < delBlocks.length; j++) {
       console.log("Deleted Block: ", delBlocks[j]);
-      requestBlock(delBlocks[j].i, delBlocks[j], "DELETE");
+      requestBlock(delBlocks[j].data_grid.i, delBlocks[j], "DELETE");
     }
     setDelBlocks([]);
     
     for (let j = 0; j < addBlocks.length; j++) {
       console.log("Added Block: ", addBlocks[j]);
-      requestBlock(addBlocks[j].i, addBlocks[j], "POST");
+      requestBlock(addBlocks[j].data_grid.i, addBlocks[j], "POST");
     }
     setAddBlocks([]);
     
     for (let i = 0; i < blocks2.length; i++) {
       console.log(blocks2[i]);
-      requestBlock(blocks2[i].i, blocks2[i], "PUT");
+      requestBlock(blocks2[i].data_grid.i, blocks2[i], "PUT");
     }
     console.log(blocks2);
     
@@ -165,10 +169,10 @@ function App() {
       const header = {'Content-Type' : 'application/json'};
       let response;
       if (type === "POST") {
-        response = await fetch(`http://${env_HOSTNAME}:8082/api/blocks`, 
+        response = await fetch(`http://${env_HOSTNAME}:8092/api/blocks`, 
                               {method: 'POST', headers: header, body: JSON.stringify(block)});
       } else {
-        response = await fetch(`http://${env_HOSTNAME}:8082/api/blocks/${i}`, 
+        response = await fetch(`http://${env_HOSTNAME}:8092/api/blocks/${i}`, 
                               {method: type, headers: header, body: JSON.stringify(block)});
       }
       if (!response.ok) {
@@ -272,7 +276,8 @@ function App() {
                                          onUpdateBlocks2={(newBlocks) => setBlocks(newBlocks)}
                                          onUpdateDelBlocks={(del) => setDelBlocks(del)}
                                          onUpdateShowEdit={(newEdit) => setEdit(newEdit)}
-                                         colors={colors}/>}
+                                         colors={colors}
+                                         env_HOSTNAME={env_HOSTNAME}/>}
         />
       </Routes>
     </div>

@@ -3,18 +3,19 @@ import "../utils/Background.css";
 
 export default function AddBlock({ blocks2, addBlocks, nameID, edit, updateBlocks, updateAddBlocks, updateNameID, updateEdit, colors }) {
     function addBlock() {
-        const newBlock2 = { i: `block ${nameID}`, 
-                            x: 0, 
-                            y: 0, 
-                            w: 2, 
-                            h: 2, 
-                            isBounded: true, 
-                            url: "https://chat.openai.com"}; 
+        const newBlock2 = { data_grid: { i: `block ${nameID}`, 
+                                         x: 0, 
+                                         y: 0, 
+                                         w: 2, 
+                                         h: 2, 
+                                         isBounded: true },
+                            link: "https://chat.openai.com", 
+                            img_url: "https://chat.openai.com/favicon.ico" };
         updateAddBlocks([...addBlocks, newBlock2]);
         updateBlocks([...blocks2, newBlock2]);
         let newNameID = (nameID > 150) ? 0 : nameID + 1; 
         updateNameID(newNameID);
-        updateEdit([...edit, {i: newBlock2.i, status: false}]);
+        updateEdit([...edit, {i: newBlock2.data_grid.i, status: false}]);
       }
 
     return (

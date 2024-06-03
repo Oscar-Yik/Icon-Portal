@@ -10,25 +10,25 @@ export default function Block ({block, removeBlock, onUpdateEdit}) {
     const { defaultRowHeight } = getConstants();
 
     return (
-        <div width={block.w*defaultRowHeight} 
-             height={block.h*defaultRowHeight}>
-          {(block.h === 1) ?
-            <DeleteIcon className="small-delete" onClick={() => removeBlock(block.i)}/>
+        <div width={block.data_grid.w*defaultRowHeight} 
+             height={block.data_grid.h*defaultRowHeight}>
+          {(block.data_grid.h === 1) ?
+            <DeleteIcon className="small-delete" onClick={() => removeBlock(block.data_grid.i)}/>
             :
-            <DeleteIcon className="removeStyle" onClick={() => removeBlock(block.i)}/>
+            <DeleteIcon className="removeStyle" onClick={() => removeBlock(block.data_grid.i)}/>
           }
-          {(block.h === 1) ?
-            <EditIcon className="small-edit" onClick={() => onUpdateEdit(block.i, true)}/>
+          {(block.data_grid.h === 1) ?
+            <EditIcon className="small-edit" onClick={() => onUpdateEdit(block.data_grid.i, true)}/>
             :
-            <EditIcon className="editButton" onClick={() => onUpdateEdit(block.i, true)}/>
+            <EditIcon className="editButton" onClick={() => onUpdateEdit(block.data_grid.i, true)}/>
           }
             <a target="_blank" 
-              href={block.url}
+              href={block.link}
               className='link'>
-                <img src={block.url + "/favicon.ico"} 
+                <img src={block.img_url} 
                     alt="Dinosaur" 
-                    width={block.w*defaultRowHeight} 
-                    height={block.h*defaultRowHeight}>
+                    width={block.data_grid.w*defaultRowHeight} 
+                    height={block.data_grid.h*defaultRowHeight}>
                 </img>
             </a>
         </div>

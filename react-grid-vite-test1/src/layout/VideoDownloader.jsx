@@ -115,9 +115,9 @@ export default function VideoDownloader ({block, removeBlock, onUpdateEdit, colo
     //                      src={failedIcon}/>)
 
     return (
-        <div width={block.w*defaultRowHeight} 
-             height={block.h*defaultRowHeight}>
-            <DeleteIcon className="widget-delete" onClick={() => removeBlock(block.i)}/>
+        <div width={block.data_grid.w*defaultRowHeight} 
+             height={block.data_grid.h*defaultRowHeight}>
+            <DeleteIcon className="widget-delete" onClick={() => removeBlock(block.data_grid.i)}/>
             <div className='choose-button' 
                  onClick={() => {setDisplay(true); setFailed(false);}}
                  style={{backgroundColor: colors.headerButton, color: colors.headerFont}}>Choose Video</div>

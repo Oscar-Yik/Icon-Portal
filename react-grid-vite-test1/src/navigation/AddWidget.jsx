@@ -7,16 +7,17 @@ import asuraScans from '../assets/asura-scans.png';
 export default function AddWidget({ colors, display, blocks2, addBlocks, edit, updateAddBlocks, updateEdit, updateBlocks }) {
 
     async function addYoutube() {
-        const newBlock2 = { i: "Youtube", 
-                            x: 0, 
-                            y: 0, 
-                            w: 4, 
-                            h: 2, 
-                            isBounded: true, 
-                            url: "https://postgresql.org"}; 
+        const newBlock2 = { data_grid: { i: "Youtube", 
+                                         x: 0, 
+                                         y: 0, 
+                                         w: 4, 
+                                         h: 2, 
+                                         isBounded: true },
+                            link: "https://postgresql.org", 
+                            img_url: "https://postgresql.org/favicon.ico" };
         updateAddBlocks([...addBlocks, newBlock2]);
         updateBlocks([...blocks2, newBlock2]);
-        updateEdit([...edit, {i: newBlock2.i, status: false}]);
+        updateEdit([...edit, {i: newBlock2.data_grid.i, status: false}]);
 
     }
 

@@ -9,26 +9,27 @@ import getConstants from '../utils/Constants';
 
 import '../utils/Background.css'
 
-export default function MyFirstGridComponent({blocks2, delBlocks, showEdit, onUpdateBlocks2, onUpdateDelBlocks, onUpdateShowEdit, colors }) {
+export default function MyFirstGridComponent({blocks2, delBlocks, showEdit, onUpdateBlocks2, onUpdateDelBlocks, onUpdateShowEdit, colors, env_HOSTNAME }) {
 
     const { defaultRowHeight, defaultCols, defaultMaxRows, windowHeight, windowWidth } = getConstants();
 
     function removeBlock(id) {
         console.log(blocks2);
         let blocks2copy = [...blocks2];
-        let findBlock = blocks2copy.find(item => item.i === id);
+        let findBlock = blocks2copy.find(item => item.data_grid.i === id);
         onUpdateDelBlocks([...delBlocks, findBlock]);
         console.log(blocks2);
-        onUpdateBlocks2(blocks2copy.filter(item => item.i !== id));
+        onUpdateBlocks2(blocks2copy.filter(item => item.data_grid.i !== id));
     }
 
     function updateLayout(nlayout) {
+        console.log("new layout: ", nlayout);
         let oldLayout = blocks2.slice();
         for (let i = 0; i < blocks2.length; i++) {
-            oldLayout[i].x = nlayout[i].x;
-            oldLayout[i].y = nlayout[i].y;
-            oldLayout[i].w = nlayout[i].w;
-            oldLayout[i].h = nlayout[i].h;
+            oldLayout[i].data_grid.x = nlayout[i].x;
+            oldLayout[i].data_grid.y = nlayout[i].y;
+            oldLayout[i].data_grid.w = nlayout[i].w;
+            oldLayout[i].data_grid.h = nlayout[i].h;
         }
         onUpdateBlocks2(oldLayout);
         console.log("After: ", blocks2);
@@ -46,18 +47,11 @@ export default function MyFirstGridComponent({blocks2, delBlocks, showEdit, onUp
     }
 
     function generateNewDOM() {
-        let grid = blocks2.map(obj => {
-            const {url, ...rest} = obj;
-            return rest; 
-        })
         return blocks2.map(block => {
-            let index = block.i;
-            let edit = showEdit.find(item => item.i === index);
-            let gridItem = grid.find(item => item.i === index);
-            if (block.i === "Youtube") {
-                gridItem.isResizable = false;
-                return <div key={block.i}
-                        data-grid={gridItem}
+            if (block.data_grid.i === "Youtube") {
+                block.data_grid.isResizable = false; 
+                return <div key={block.data_grid.i}
+                        data-grid={block.data_grid}
                         className="block"
                         style={{backgroundColor: colors.block}}>
                             <VideoDownloader block={block} 
@@ -66,8 +60,8 @@ export default function MyFirstGridComponent({blocks2, delBlocks, showEdit, onUp
                                              colors={colors}/>
                     </div>
             } else { 
-                return <div key={block.i}
-                        data-grid={gridItem}
+                return <div key={block.data_grid.i}
+                        data-grid={block.data_grid}
                         className="block"
                         style={{backgroundColor: colors.block}}>
                             <Block block={block} 
@@ -93,7 +87,8 @@ export default function MyFirstGridComponent({blocks2, delBlocks, showEdit, onUp
                 >
                     {generateNewDOM()}
                 </GridLayout>
-                <EditBox showEdit={showEdit} updateEdit={onUpdateShowEdit} blocks2={blocks2} updateBlocks2={onUpdateBlocks2} colors={colors}/>
+                <EditBox showEdit={showEdit} updateEdit={onUpdateShowEdit} blocks2={blocks2} 
+                         updateBlocks2={onUpdateBlocks2} colors={colors} env_HOSTNAME={env_HOSTNAME}/>
             </GridOverlay>
         </GridContainer>
     );

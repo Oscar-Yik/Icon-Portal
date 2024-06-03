@@ -4,15 +4,35 @@ import getConstants from '../utils/Constants';
 
 import '../utils/Background.css'
 
-export default function EditBox({showEdit, updateEdit, blocks2, updateBlocks2, colors}) {
+export default function EditBox({showEdit, updateEdit, blocks2, updateBlocks2, colors, env_HOSTNAME}) {
 
     const { defaultRowHeight, margins, colWidth } = getConstants();
 
+    async function fetchIcons(url) {
+        try {
+            const img_url = url.replace(/\//g, '%2F');
+            console.log(img_url);
+            const response = await fetch(`http://${env_HOSTNAME}:3000/icon_url?i=${img_url}`);
+            if (!response.ok) {
+              console.log("Bad Query: fetchIcons()");
+            }
+            const data = await response.text();
+            return data;
+        } catch (e) {
+            console.log("Error: couldn't get icon image");
+            return url + "/favicon.ico";
+        }
+    }
+
     function updateInfo(id, text) {
-        let blocks2copy = blocks2.slice();
-        let block = blocks2copy.find(item => item.i === id);
-        block.url = text; 
-        updateBlocks2(blocks2copy);
+        fetchIcons(text).then(icon => {
+            console.log("Got icon: ", icon);
+            let blocks2copy = blocks2.slice();
+            let block = blocks2copy.find(item => item.data_grid.i === id);
+            block.link = text;
+            block.img_url = icon; 
+            updateBlocks2(blocks2copy);
+        });
     }
 
     function clearEditAll() {
@@ -34,10 +54,10 @@ export default function EditBox({showEdit, updateEdit, blocks2, updateBlocks2, c
 
     return showEdit.map(edit => {
         if (edit.status) {
-            const block = blocks2.find(item => item.i === edit.i);
-            const boxX = getX(block.x, block.w);
-            const boxY = getY(block.y);
-            const boxWidth = (block.url.length)*9;
+            const block = blocks2.find(item => item.data_grid.i === edit.i);
+            const boxX = getX(block.data_grid.x, block.data_grid.w);
+            const boxY = getY(block.data_grid.y);
+            const boxWidth = (block.link.length)*9;
             return <div key={edit.i+"e"} 
                         className="box"
                         onClick={() => clearEditAll()}>
@@ -47,12 +67,12 @@ export default function EditBox({showEdit, updateEdit, blocks2, updateBlocks2, c
                                      backgroundColor: colors.editBox,
                                      color: colors.editBoxFont}}
                              onClick={(event) => event.stopPropagation()}>
-                                <EditableTextItem key={block.i} 
-                                                  initialText={block.url} 
-                                                  id={block.i} 
+                                <EditableTextItem key={block.data_grid.i} 
+                                                  initialText={block.link} 
+                                                  id={block.data_grid.i} 
                                                   onStateChange={updateInfo}
                                                   colors={colors}/>
-                                <div>Block ID: {block.i}</div>
+                                <div>Block ID: {block.data_grid.i}</div>
                         </div>
                         <div className="left-arrow" 
                              style={{top: boxY+10, left: boxX-15, borderRight: `10px solid ${colors.editBox}`}}
