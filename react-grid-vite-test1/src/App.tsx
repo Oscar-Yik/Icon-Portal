@@ -10,7 +10,6 @@ import SaveTheme from './navigation/SaveTheme';
 import HeaderPopup from './navigation/HeaderPopup';
 import ChangeBackground from './navigation/ChangeBackground';
 import AddWidget from './navigation/AddWidget';
-import getIcon from './utils/GetIcons';
 
 import 'bootstrap/dist/css/bootstrap.css';
 import './utils/Background.css'

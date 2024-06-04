@@ -2,9 +2,18 @@ import os
 import glob
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
+from flask_mysqldb import MySQL
 from downloader import download_playlist, download_single_video
 
 app = Flask(__name__)
+ 
+# app.config['MYSQL_HOST'] = 'localhost'
+# app.config['MYSQL_PORT'] = 3306
+# app.config['MYSQL_USER'] = 'root'
+# app.config['MYSQL_PASSWORD'] = '1234'
+# app.config['MYSQL_DB'] = 'grid-videos'
+ 
+# mysql = MySQL(app)
 CORS(app)
 
 # with app.app_context():
