@@ -5,6 +5,7 @@ import botocore
 import botocore.exceptions
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
+from flask_mysqldb import MySQL
 from pymongo import MongoClient
 from dotenv import load_dotenv
 import pymongo.errors
