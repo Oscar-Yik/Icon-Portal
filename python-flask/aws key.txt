@@ -1,2 +1,0 @@
-aws iam access key: AKIAU6GDW4DMFFUNTMNA
-aws iam secret key: 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
