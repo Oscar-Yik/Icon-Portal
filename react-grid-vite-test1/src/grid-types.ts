@@ -1,8 +1,6 @@
 
-export type themeNames = "current" | "Theme 1" | "Theme 2" | "Theme 3" | "Theme 4"
-
 export type themeType = {
-    name: themeNames,
+    name: string,
     block: string, 
     header: string, 
     headerButton: string, 
@@ -43,6 +41,8 @@ export type colorType = {
 
 export type unitType = "nameID"
 
+export type themeNames = "current" | "Theme 1" | "Theme 2" | "Theme 3" | "Theme 4"
+
 export type apiKeys = "blocks" | "nameID" | "theme";
 
 export type httpRequestType = "POST" | "GET" | "PUT" | "DELETE"
@@ -53,18 +53,10 @@ export type updateDelBlocksFn = (delBlocks: blockType[]) => void;
 
 export type updateEditFn = (showEdit: blockModalType[]) => void;
 
-export type backImgType = { id: string, name: string, imgPath: string }
+export type backImgType = { id: string, imgPath: string }
 
 export type displayIcons = {
     next: boolean,
     upload: boolean, 
     edit: boolean 
 }
-
-export type metadata = { name: string, data: number }
-
-export type updateBkgImgs = (newBkgImgs: backImgType[]) => void;
-
-export type getFunction = (img_name: string) => Promise<string>; 
-
-export type colorOptions = "block" | "header" | "headerButton" | "headerFont" | "grid" | "editBox" | "editBoxFont"; 

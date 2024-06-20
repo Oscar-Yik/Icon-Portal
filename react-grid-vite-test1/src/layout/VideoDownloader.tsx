@@ -8,16 +8,10 @@ import getConstants from '../utils/Constants';
 import youtubeMusicIcon from '../assets/youtube-music-icon.png';
 import conversionIcon from '../assets/conversion-icon.png';
 import failedIcon from '../assets/failed-download.png';
-import getErrorMessage from '../utils/Errors';
+
 import '../utils/Background.css'
 
-import { blockType, colorType } from './../grid-types';
-
-type removeFunction = (id: string) => void;
-
-type VideoDownloaderProps = { block: blockType, removeBlock: removeFunction, colors: colorType };
-
-export default function VideoDownloader ({block, removeBlock, colors} : VideoDownloaderProps) {
+export default function VideoDownloader ({block, removeBlock, colors}) {
     
     const [display, setDisplay] = useState(false);
     const [failed, setFailed] = useState(false);
@@ -36,7 +30,7 @@ export default function VideoDownloader ({block, removeBlock, colors} : VideoDow
         });
     }
 
-    async function downloadSingleVideo(video: string) {
+    async function downloadSingleVideo(video) {
         try {
             const response = await fetch(`http://${env_HOSTNAME}:3001/youtube?title=${video}`, 
                                     {method: 'GET'});
@@ -67,7 +61,7 @@ export default function VideoDownloader ({block, removeBlock, colors} : VideoDow
         }
     }
 
-    function updateLink(trash: any, newLink: string) {
+    function updateLink(trash, newLink) {
         console.log("new Link: ", newLink);
         setLink(newLink);
     }
@@ -85,7 +79,7 @@ export default function VideoDownloader ({block, removeBlock, colors} : VideoDow
             const data = await response.json();
             return data;
         } catch (e) {
-            console.log("Error: cannot download youtube", getErrorMessage(e));
+            console.log("Error: cannot download youtube", e.message);
             setFailed(true);
         }
     }
@@ -100,7 +94,7 @@ export default function VideoDownloader ({block, removeBlock, colors} : VideoDow
                 setDownload(false);
                 setDisDownload(true);
                 console.log(data);
-                let titles = data.title.map((path: string) => {
+                let titles = data.title.map(path => {
                     // python-flask
                     return "./python-flask/Videos/" + path;
                 })
@@ -121,7 +115,8 @@ export default function VideoDownloader ({block, removeBlock, colors} : VideoDow
     //                      src={failedIcon}/>)
 
     return (
-        <div style={{width: `${block.data_grid.w*defaultRowHeight}`, height: `${block.data_grid.h*defaultRowHeight}`}}>
+        <div width={block.data_grid.w*defaultRowHeight} 
+             height={block.data_grid.h*defaultRowHeight}>
             <DeleteIcon className="widget-delete" onClick={() => removeBlock(block.data_grid.i)}/>
             <div className='choose-button' 
                  onClick={() => {setDisplay(true); setFailed(false);}}
