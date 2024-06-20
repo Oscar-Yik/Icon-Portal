@@ -10,6 +10,9 @@ import SaveTheme from './navigation/SaveTheme';
 import HeaderPopup from './navigation/HeaderPopup';
 import ChangeBackground from './navigation/ChangeBackground';
 import AddWidget from './navigation/AddWidget';
+import getErrorMessage from './utils/Errors';
+import { themeType, blockType, data_grid_type, blockModalType, colorType, 
+         unitType, apiKeys, themeNames, httpRequestType } from './grid-types';
 
 import 'bootstrap/dist/css/bootstrap.css';
 import './utils/Background.css'
@@ -19,27 +22,29 @@ import '@fortawesome/fontawesome-free/css/all.css';
 
 function App() {
 
-  const [blocks2, setBlocks] = useState([]);
-  const [delBlocks, setDelBlocks] = useState([]);
-  const [addBlocks, setAddBlocks] = useState([]);
+  const [blocks2, setBlocks] = useState<blockType[]>([]);
+  const [delBlocks, setDelBlocks] = useState<blockType[]>([]);
+  const [addBlocks, setAddBlocks] = useState<blockType[]>([]);
 
-  const [backImg, setBackImg] = useState("");
-  const [edit, setEdit] = useState([]);
+  const [backImage, setBackImg] = useState("");
+  const [edit, setEdit] = useState<blockModalType[]>([]);
   const [nameID, setNameID] = useState(0);
-  const [colors, setColors] = useState([]);
+  const [colors, setColors] = useState<colorType>({ block: "", header: "", headerButton: "", headerFont: "", 
+                                                    grid: "", editBox: "", editBoxFont: "" });
   const [dispColPal, setDisColPal] = useState(false);
   const [disTheme, setDisTheme] = useState(false);
   const [disSave, setDisSave] = useState(false);
   const [disBack, setDisBack] = useState(false);
   const [disWid, setDisWid] = useState(false);
-  const [theme, setTheme] = useState({});
+  const [theme, setTheme] = useState<themeType>({ name: "", block: "", header: "", headerButton: "", headerFont: "", 
+                                                  grid: "", editBox: "", editBoxFont: "", backImg: "" });
 
   const navigate = useNavigate();
   const location = useLocation();
 
   const env_HOSTNAME = import.meta.env.VITE_HOSTNAME;
 
-  async function fetchData(name) {
+  async function fetchData(name: apiKeys) {
     try {
       // console.log("call: ", `http://${env_HOSTNAME}:8092/api/blocks`);
       let response;
@@ -60,7 +65,7 @@ function App() {
     }
   }
 
-  function saveColors(db_theme) {
+  function saveColors(db_theme: themeType) {
     const { name, backImg, ...color_copy } = db_theme;
     setColors(color_copy);
   }
@@ -72,9 +77,9 @@ function App() {
     // getIcon("https://snyk.io/advisor/npm-package/http-proxy-middleware/functions/http-proxy-middleware.createProxyMiddleware").then(icon => {
     //   console.log("Got icon: ", icon);
     // });
-    console.log("use effected :D :D :D");
+    // console.log("use effected :D :D :D");
     fetchData("blocks").then(async (data) => {
-      console.log("blocks: ", data);
+      // console.log("blocks: ", data);`
       setBlocks(data);
       let newShowEdit = [];
       for (let i = 0; i < data.length; i++) {
@@ -88,7 +93,7 @@ function App() {
     });
 
     fetchData("theme").then((data) => {
-      console.log("theme changed: ", data);
+      // console.log("theme changed: ", data);
       setTheme(data);
       saveColors(data);
       setBackImg(data.backImg);
@@ -97,12 +102,16 @@ function App() {
   }, []);
 
   useEffect(() => {
-    const {name, backImg: newImg, ...other_colors} = theme; 
-    setBackImg(newImg);
+    const {name, backImg, ...other_colors} = theme; 
+    setBackImg(backImg);
     setColors(other_colors);
   }, [theme])
 
-  function updateBackground(trash, newImg) {
+  useEffect(() => {
+    console.log("Background Image Changed: ", backImage)
+  }, [backImage])
+
+  function updateBackground(trash: any, newImg: string) {
     //setBackImg(newImg);
     const backImage = {backImg: newImg};
     const {backImg: oldImg, ...others} = theme;
@@ -112,7 +121,7 @@ function App() {
     //updateTheme(newTheme, "current"); 
   }
 
-  async function updateThings(name, state) {
+  async function updateThings(name: unitType, state: string) {
     try {
       const jsonBody = { "key": name, "value": state }; 
       const header = {'Content-Type' : 'application/json'};
@@ -130,7 +139,7 @@ function App() {
     }
   }
 
-  function saveGrid(theme_name){
+  function saveGrid(theme_name: themeNames){
     // console.log("addBlocks: ", addBlocks); 
     // console.log("delBlocks: ", delBlocks); 
     // console.log("blocks2: ", blocks2); 
@@ -152,21 +161,17 @@ function App() {
     }
     console.log(blocks2);
     
-    // updateThings("backgroundImage", backImg);
-    // updateThings("header", headerColor);
-    // colors.forEach(obj => {
-    //   updateThings(obj.type, obj.url);
-    // })
     updateThings("nameID", nameID.toString());
 
-    const backImage = {backImg: backImg};
-    const {name, backI, ...oldColors} = theme;
-    const newTheme = {...name, ...backImage, ...colors}; 
+    const backgroundImage = {backImg: backImage};
+    const {name, ...oldColors} = theme;
+    const nameObj = {name: name};
+    const newTheme = {...nameObj, ...backgroundImage, ...colors}; 
     updateTheme(newTheme, theme_name); 
     updateTheme(newTheme, "current"); 
   }
 
-  async function requestBlock(i, block, type) {
+  async function requestBlock(i: string, block: blockType, type: httpRequestType) {
     try {
       const header = {'Content-Type' : 'application/json'};
       let response;
@@ -183,11 +188,11 @@ function App() {
       const data = await response.json();
       return data;
     } catch (e) {
-      console.log("Error: cannot", type, "block", e.message);
+      console.log("Error: cannot", type, "block", getErrorMessage(e));
     }
   }
 
-  async function updateTheme(newTheme, i) {
+  async function updateTheme(newTheme: themeType, i: themeNames) {
     try {
       const header = {'Content-Type' : 'application/json'};
       const response = await fetch(`http://${env_HOSTNAME}:8082/api/themes/${i}`, 
@@ -197,11 +202,11 @@ function App() {
       }
       //console.log("Theme updated: ", newTheme);
     } catch (e) {
-      console.log("Error: cannot update theme ", i, ": ", e.message);
+      console.log("Error: cannot update theme ", i, ": ", getErrorMessage(e));
     }
   }
 
-  function chooseTheme(newTheme) {
+  function chooseTheme(newTheme: themeType) {
     setTheme(newTheme);
     console.log("reached: ", newTheme);
     const dbTheme = {...newTheme};
@@ -211,7 +216,7 @@ function App() {
 
   return (
     <div style={{
-        backgroundImage: `url(${backImg})`,
+        backgroundImage: `url(${backImage})`,
         backgroundRepeat: 'no-repeat',
         backgroundSize: 'cover', 
         backgroundPosition: 'center'
@@ -260,7 +265,7 @@ function App() {
         <ColorPalette display={dispColPal} colors={colors} updateColors={setColors}/>
         <ChangeTheme display={disTheme} colors={colors} theme={theme} updateTheme={chooseTheme} env_HOSTNAME={env_HOSTNAME}/>
         <SaveTheme display={disSave} colors={colors} theme={theme} updateTheme={setTheme} saveGrid={saveGrid} env_HOSTNAME={env_HOSTNAME}/>
-        <ChangeBackground display={disBack} colors={colors} backImg={backImg} updateBackImg={updateBackground}/>
+        <ChangeBackground display={disBack} colors={colors} backImg={backImage} updateBackImg={updateBackground}/>
         <AddWidget display={disWid} colors={colors} blocks2={blocks2} addBlocks={addBlocks} edit={edit} 
                    updateBlocks={setBlocks} updateAddBlocks={setAddBlocks} updateEdit={setEdit}/>
 
@@ -269,15 +274,18 @@ function App() {
         </li>
       </ul>
       <Routes>
-        <Route path="/" element={<StaticGridComponent blocks2={blocks2} colors={colors} updateEdit={(newEdit) => setEdit(newEdit)}/>} />
+        <Route path="/" element={<StaticGridComponent blocks2={blocks2} colors={colors} delBlocks={delBlocks} 
+                onUpdateBlocks2={(newBlocks: blockType[]) => setBlocks(newBlocks)}
+                onUpdateDelBlocks={(del: blockType[]) => setDelBlocks(del)}/>} 
+        />
         <Route
           path="/edit-grid"
           element={<MyFirstGridComponent blocks2={blocks2} 
                                          delBlocks={delBlocks}
                                          showEdit={edit}
-                                         onUpdateBlocks2={(newBlocks) => setBlocks(newBlocks)}
-                                         onUpdateDelBlocks={(del) => setDelBlocks(del)}
-                                         onUpdateShowEdit={(newEdit) => setEdit(newEdit)}
+                                         onUpdateBlocks2={(newBlocks: blockType[]) => setBlocks(newBlocks)}
+                                         onUpdateDelBlocks={(del: blockType[]) => setDelBlocks(del)}
+                                         onUpdateShowEdit={(newEdit: blockModalType[]) => setEdit(newEdit)}
                                          colors={colors}
                                          env_HOSTNAME={env_HOSTNAME}/>}
         />

@@ -12,7 +12,8 @@ export default function AddWidget({ colors, display, blocks2, addBlocks, edit, u
                                          y: 0, 
                                          w: 4, 
                                          h: 2, 
-                                         isBounded: true },
+                                         isBounded: true, 
+                                         isResizable: true },
                             link: "https://postgresql.org", 
                             img_url: "https://postgresql.org/favicon.ico" };
         updateAddBlocks([...addBlocks, newBlock2]);

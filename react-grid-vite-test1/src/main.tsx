@@ -6,7 +6,9 @@ import App from './App'
 import errorImg from './assets/error_frog.png';
 //import './index.css'
 
-function Fallback() {
+type throwAwayType = { error: any, resetErrorBoundary: any}
+
+function Fallback({ error, resetErrorBoundary }: throwAwayType) {
   return (
     <div style={{backgroundColor: "#AFE1AF", 
                  width: '100vw', 

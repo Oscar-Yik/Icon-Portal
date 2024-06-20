@@ -11,7 +11,7 @@ import failedIcon from '../assets/failed-download.png';
 
 import '../utils/Background.css'
 
-export default function VideoDownloader ({block, removeBlock, onUpdateEdit, colors}) {
+export default function VideoDownloader ({block, removeBlock, colors}) {
     
     const [display, setDisplay] = useState(false);
     const [failed, setFailed] = useState(false);

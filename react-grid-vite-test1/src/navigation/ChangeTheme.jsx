@@ -7,6 +7,7 @@ export default function ChangeTheme({ colors, display, theme, updateTheme, env_H
     
     useEffect(() => {
         if (display) {
+            console.log("themes: ", theme)
             fetchThemes().then(data => setAllThemes(data));
         }
     }, [display])

@@ -8,7 +8,8 @@ export default function AddBlock({ blocks2, addBlocks, nameID, edit, updateBlock
                                          y: 0, 
                                          w: 2, 
                                          h: 2, 
-                                         isBounded: true },
+                                         isBounded: true, 
+                                         isResizable: true },
                             link: "https://chat.openai.com", 
                             img_url: "https://chat.openai.com/favicon.ico" };
         updateAddBlocks([...addBlocks, newBlock2]);

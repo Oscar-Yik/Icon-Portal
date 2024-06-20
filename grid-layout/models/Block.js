@@ -9,7 +9,8 @@ const BlockSchema = new mongoose.Schema({
     y: { type: Number, required: true },
     w: { type: Number, required: true },
     h: { type: Number, required: true },
-    isBounded: { type: Boolean, required: true }
+    isBounded: { type: Boolean, required: true },
+    isResizable: { type: Boolean, required: true }
   },
   link: { type: String, required: true },
   img_url: { type: String, required: true }
