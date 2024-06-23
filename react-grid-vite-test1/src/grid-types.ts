@@ -53,10 +53,12 @@ export type updateDelBlocksFn = (delBlocks: blockType[]) => void;
 
 export type updateEditFn = (showEdit: blockModalType[]) => void;
 
-export type backImgType = { id: string, imgPath: string }
+export type backImgType = { id: string, name: string, imgPath: string }
 
 export type displayIcons = {
     next: boolean,
     upload: boolean, 
     edit: boolean 
 }
+
+export type metadata = { name: string, data: number }
