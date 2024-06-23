@@ -12,7 +12,7 @@ import ChangeBackground from './navigation/ChangeBackground';
 import AddWidget from './navigation/AddWidget';
 import getErrorMessage from './utils/Errors';
 import { themeType, blockType, data_grid_type, blockModalType, colorType, 
-         unitType, apiKeys, themeNames, httpRequestType } from './grid-types';
+         unitType, apiKeys, themeNames, httpRequestType, backImgType } from './grid-types';
 
 import 'bootstrap/dist/css/bootstrap.css';
 import './utils/Background.css'
@@ -26,7 +26,7 @@ function App() {
   const [delBlocks, setDelBlocks] = useState<blockType[]>([]);
   const [addBlocks, setAddBlocks] = useState<blockType[]>([]);
 
-  const [backImage, setBackImg] = useState("");
+  const [backImage, setBackImg] = useState<backImgType>({ id: "current", name: "Sample_Background_2", imgPath: "./src/assets/images/Sample_Background_1.jpg" });
   const [edit, setEdit] = useState<blockModalType[]>([]);
   const [nameID, setNameID] = useState(0);
   const [colors, setColors] = useState<colorType>({ block: "", header: "", headerButton: "", headerFont: "", 
@@ -38,6 +38,12 @@ function App() {
   const [disWid, setDisWid] = useState(false);
   const [theme, setTheme] = useState<themeType>({ name: "", block: "", header: "", headerButton: "", headerFont: "", 
                                                   grid: "", editBox: "", editBoxFont: "", backImg: "" });
+  const [bkgImgs, setBkgImgs] = useState<backImgType[]>([
+    { id: "1", name: "Sample_Background_1", imgPath: "https://wallpapercave.com/wp/wp13129045.jpg"}, 
+    { id: "2", name: "Sample_Background_2", imgPath: "./src/assets/images/Sample_Background_1.jpg" }, 
+    { id: "3", name: "Sample_Background_3", imgPath: "./src/assets/images/Sample_Background_2.jpg" }, 
+    { id: "4", name: "Sample_Background_4", imgPath: "https://wallpapercave.com/wp/wp13129045.jpg" }, 
+    { id: "5", name: "Sample_Background_5", imgPath: "https://wallpapercave.com/wp/wp13129045.jpg" }])
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -70,6 +76,44 @@ function App() {
     setColors(color_copy);
   }
 
+  async function getImage(img_name: string) {
+    try {
+        const response = await fetch(`http://${env_HOSTNAME}:8082/api/s3/${img_name}`, 
+                                {method: 'GET'});
+        // const fileName = response.headers.get('file_name');
+        const blob = await response.blob();
+        const objectURL = URL.createObjectURL(blob);
+        return objectURL;
+        // let bkg_copy = bkgImgs.slice();
+        // bkg_copy[index].imgPath = objectURL;
+        // setBkgImgs(bkg_copy);
+    } catch (error) {
+        console.log("Error retrieving image:", img_name);
+        return img_name;
+    }
+  }
+
+  async function fetchThemes() {
+    const names = ["Sample_Background_1.jpg", "Sample_Background_2.jpg", "Sample_Background_3.jpg", 
+                    "Sample_Background_4.jpg", "Sample_Background_5.jpg"];
+    try {
+        for (let i = 0; i < 5; i++) {
+            const obj_url = await getImage(names[i])
+            if (obj_url) {
+              let bkg_copy = bkgImgs.slice();
+              bkg_copy[i].name = names[i];
+              bkg_copy[i].imgPath = obj_url;
+              setBkgImgs(bkg_copy);
+            } else {
+              console.log("Couldn't retrive image");
+            }
+                // console.log("Got image:", names[i]); 
+        }
+    } catch (e) {
+        console.log("Couldn't get all images");
+    }
+  }
+
   // on startup fetch blocks, background, header color, nameID
   useEffect(() => {
     // console.log("call: ", `http://${env_HOSTNAME}:8082/api/blocks`);
@@ -99,11 +143,23 @@ function App() {
       setBackImg(data.backImg);
     });
 
+    fetchThemes()
+      .then(() => console.log("Got all images"))
+      .catch(e => console.log("uhoh"));
   }, []);
 
   useEffect(() => {
     const {name, backImg, ...other_colors} = theme; 
-    setBackImg(backImg);
+    // setBackImg(backImg);
+    getImage(backImg)
+      .then(obj_url => {
+        if (obj_url) {
+          setBackImg({ id: "current", name: backImg, imgPath: obj_url });  
+        }
+      })
+      .catch(err => {
+        console.log("Couldn't get background image");
+      })
     setColors(other_colors);
   }, [theme])
 
@@ -163,7 +219,7 @@ function App() {
     
     updateThings("nameID", nameID.toString());
 
-    const backgroundImage = {backImg: backImage};
+    const backgroundImage = {backImg: backImage.name};
     const {name, ...oldColors} = theme;
     const nameObj = {name: name};
     const newTheme = {...nameObj, ...backgroundImage, ...colors}; 
@@ -216,7 +272,7 @@ function App() {
 
   return (
     <div style={{
-        backgroundImage: `url(${backImage})`,
+        backgroundImage: `url(${backImage.imgPath})`,
         backgroundRepeat: 'no-repeat',
         backgroundSize: 'cover', 
         backgroundPosition: 'center'
@@ -265,7 +321,10 @@ function App() {
         <ColorPalette display={dispColPal} colors={colors} updateColors={setColors}/>
         <ChangeTheme display={disTheme} colors={colors} theme={theme} updateTheme={chooseTheme} env_HOSTNAME={env_HOSTNAME}/>
         <SaveTheme display={disSave} colors={colors} theme={theme} updateTheme={setTheme} saveGrid={saveGrid} env_HOSTNAME={env_HOSTNAME}/>
-        <ChangeBackground display={disBack} colors={colors} backImg={backImage} updateBackImg={updateBackground}/>
+        <ChangeBackground display={disBack} colors={colors} env_HOSTNAME={env_HOSTNAME} backImg={backImage} 
+                          bkgImgs={bkgImgs} updateBackImg={updateBackground} 
+                          updateBkgImgs={(newBkgImgs: backImgType[]) => setBkgImgs(newBkgImgs)}
+                          getImage={(img_name: string) => getImage(img_name)}/>
         <AddWidget display={disWid} colors={colors} blocks2={blocks2} addBlocks={addBlocks} edit={edit} 
                    updateBlocks={setBlocks} updateAddBlocks={setAddBlocks} updateEdit={setEdit}/>
 
