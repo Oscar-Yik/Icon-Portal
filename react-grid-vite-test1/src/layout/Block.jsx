@@ -22,15 +22,12 @@ export default function Block ({block, removeBlock, onUpdateEdit}) {
             :
             <EditIcon className="editButton" onClick={() => onUpdateEdit(block.data_grid.i, true)}/>
           }
-            <a target="_blank" 
-              href={block.link}
-              className='link'>
-                <img src={block.img_url} 
-                    alt="Dinosaur" 
-                    width={block.data_grid.w*defaultRowHeight} 
-                    height={block.data_grid.h*defaultRowHeight}>
-                </img>
-            </a>
+
+            <img src={block.img_url} 
+                alt="Dinosaur" 
+                width={block.data_grid.w*defaultRowHeight} 
+                height={block.data_grid.h*defaultRowHeight}>
+            </img>
         </div>
       );
 }

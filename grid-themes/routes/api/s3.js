@@ -4,8 +4,10 @@ require('dotenv').config({ path: __dirname + "/../../.env" });
 const express = require('express');
 const path = require('path');
 const https = require('https');
+const http = require('http');
 const router = express.Router();
 const fs = require('fs');
+const multer = require('multer');
 const client = new S3Client({
     region: process.env.AWS_REGION,
     credentials: {
@@ -13,6 +15,9 @@ const client = new S3Client({
         secretAccessKey: process.env.AWS_SECRET_KEY
     }
 });
+
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
 // Load ImagePath and Metadata models
 const ImagePath = require('../../models/ImagePath');
@@ -146,7 +151,7 @@ router.get('/:i', (req, res) => {
     if (fs.existsSync(filePath)) {
         res.sendFile(absolutefilePath, (err) => {
             if (err) {
-                console.error("Error sending file (already exists):", err);
+                console.log("Error sending file (already exists):", err);
                 res.status(500).json({ error: 'Internal Server Error', message: "Couldn't send file (already exists)" });
             } else {
                 // console.log("File sent successfully (already exists)");
@@ -171,7 +176,7 @@ router.get('/:i', (req, res) => {
                 res.setHeader('file_name', req.params.i);
                 res.sendFile(absolutefilePath, (err) => {
                     if (err) {
-                        console.error("Error sending file:", err);
+                        console.log("Error sending file:", err);
                         res.status(500).json({ error: 'Internal Server Error', message: `Couldn't send file ${absolutefilePath}` });
                     } else {
                         console.log("File sent successfully");
@@ -182,6 +187,81 @@ router.get('/:i', (req, res) => {
     }
 });
 
+async function makePostRequest(file_name, is_url) {
+    return new Promise((resolve, reject) => {
+        console.log("trying to make post request to s3");
+        const body = JSON.stringify({ "img_name": file_name, "is_url": is_url });
+
+        const options = {
+            hostname: process.env.env_HOSTNAME, 
+            port: 8082, 
+            path: "/api/s3",
+            method: "POST", 
+            headers: {
+                'Content-Type': "application/json",
+                'Content-Length': Buffer.byteLength(body)
+            }
+        };
+    
+        http.request(options, res => {
+            let data = "";
+            res.on("data", chunk => { data += chunk; })
+            res.on("end", () => { resolve(data); })
+        })
+        .on("error", err => { 
+            console.log("Error in making post request to s3"); 
+            reject(err); 
+        })
+        .end(body);
+    });
+}
+
+// make new endpoint that takes in a file, filename and saves it, then calls the one underneath
+// @route   POST api/s3/sendImage
+// @desc    upload image to nodeJS application
+// @access  Public
+router.post('/sendImage', upload.single('file'), (req, res) => {
+    const fileBuffer = req.file.buffer;
+    const originalName = req.file.originalname;
+    
+    // Define the path where you want to save the file
+    const filePath = "./assets/upload/" + originalName;
+
+    if (fs.existsSync(filePath)) {
+        res.status(400).json({ error: "Bad Request", message: "File already exists" });
+    } else {
+        // Save the file buffer to a file
+        fs.writeFile(filePath, fileBuffer, (err) => {
+            if (err) {
+                console.log('Error saving file');
+                return res.status(500).send('Error saving file');
+            }
+            // res.status(200).json({message: "File uploaded successfully" });
+            makePostRequest(originalName, false)
+                .then(data => res.status(200).json({ message: `File ${originalName} uploaded successfully`, data: data }))
+                .catch(e => res.status(500).json({ error: "Internal Service Error", message: "Couldn't upload to s3" }));
+        });
+    }
+})
+
+
+// @route   POST api/s3/sendImageURL
+// @desc    upload image url to nodeJS application
+// @access  Public
+router.post('/sendImageURL', (req, res) => {
+    // https://image-0.uhdpaper.com/wallpaper/kirby-game-art-4k-wallpaper-uhdpaper.com-462@0@h.jpg
+    makePostRequest(req.body.url, true)
+        .then(data => { 
+            const dataJSON = JSON.parse(data);
+            console.log(dataJSON.message);
+            if (dataJSON.error) {
+                res.status(200).json({ status: 0 }); 
+            } else {
+                res.status(200).json({ status: 1 }); 
+            }
+        })
+        .catch(e => { res.status(200).json({ status: 0 }); });
+})
 
 // @route   POST api/s3
 // @desc    upload image to s3 bucket
@@ -193,6 +273,8 @@ router.post('/', (req, res) => {
     // make a new imgPath in mongoDB + make a name with metadata 
     let img_name = req.body.img_name;
     let image_path = 'assets/upload/' + img_name;
+
+    console.log(`Making s3 post request on: ${image_path}`);
 
     function downloadImage(image_url, image_path) {
         return new Promise((resolve, reject) => {
@@ -209,7 +291,7 @@ router.post('/', (req, res) => {
                 });
             }).on('error', err => {
                 fs.unlink(image_path, () => reject(err));
-                console.error(`Error downloading image: ${err.message}`);
+                console.log(`Error downloading image`);
             });
         });
     }
@@ -224,13 +306,12 @@ router.post('/', (req, res) => {
                 return 'assets/upload/' + new_name;
             } 
         } catch (e) {
-            console.log(e);
+            // console.log(e);
             throw new Error("Couldn't download image");
         }
     }
 
     async function putObject() {
-
         try {
             await check_url(req.body.is_url);
             const fileContent = fs.readFileSync(image_path);
@@ -244,7 +325,7 @@ router.post('/', (req, res) => {
             const response = await client.send(command);
             return response;
           } catch (error) {
-            console.log(error);
+            console.log("BAd things happneed");
             throw error;
           }
     };

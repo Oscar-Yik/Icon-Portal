@@ -396,3 +396,7 @@
   height: 20px;
   z-index: 2
 }
+
+input[type="file"] {
+  display: none;
+}
