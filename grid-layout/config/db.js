@@ -2,9 +2,10 @@
 require('dotenv').config({ path: __dirname + "/../.env" });
 
 const mongoose = require("mongoose");
-const db =
-  `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASSWORD}@whatisacluster.n8fqxho.mongodb.net/${process.env.MONGODB_DBNAME}?retryWrites=true&w=majority&appName=WhatIsACluster`;
-/* Replace <password> with your database password */
+// const db =
+//   `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASSWORD}@whatisacluster.n8fqxho.mongodb.net/${process.env.MONGODB_DBNAME}?retryWrites=true&w=majority&appName=WhatIsACluster`;
+  const db = 
+  `mongodb+srv://${process.env.MONGODB_USER}:${process.env.DEV_MONGODB_PASSWORD}@grid-data.qbo6wua.mongodb.net/${process.env.MONGODB_DBNAME}?retryWrites=true&w=majority&appName=GridData`;
 
 mongoose.set("strictQuery", true, "useNewUrlParser", true);
 

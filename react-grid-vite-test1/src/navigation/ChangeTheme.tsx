@@ -1,9 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import "../utils/Background.css";
 
-export default function ChangeTheme({ colors, display, theme, updateTheme, env_HOSTNAME }) {
+import { colorType, backImgType, themeType } from './../grid-types';
 
-    const [allThemes, setAllThemes] = useState([]);
+type updateTheme = (newTheme: themeType) => void;
+
+type updateBkgImgs = (newBkgImgs: backImgType[]) => void;
+
+type getFunction = (img_name: string) => Promise<string>; 
+
+type ChangeThemeProps = { 
+    colors: colorType, display: boolean, theme: themeType, updateTheme: updateTheme, env_HOSTNAME: string,
+    bkgImgs: backImgType[], updateBkgImgs: updateBkgImgs, getImage: getFunction}
+
+export default function ChangeTheme({ colors, display, theme, updateTheme, env_HOSTNAME, bkgImgs, updateBkgImgs, getImage } : ChangeThemeProps) {
+
+    const [allThemes, setAllThemes] = useState<themeType[]>([]);
     
     useEffect(() => {
         if (display) {
@@ -25,6 +37,25 @@ export default function ChangeTheme({ colors, display, theme, updateTheme, env_H
         }
     }
 
+    function getBackImg(img_name: string) {
+        const image = bkgImgs.find(img => img.name === img_name);
+        if (image) {
+            return image.imgPath
+        } else {
+            getImage(img_name)
+                .then(new_image_url => {
+                    const image_id = img_name.slice(18,-4);
+                    const new_image = { id: image_id, name: img_name, imgPath: new_image_url };
+                    let bkgImgs_copy = bkgImgs.slice();
+                    bkgImgs_copy.push(new_image);
+                    updateBkgImgs(bkgImgs_copy);
+                    return new_image_url;
+                })
+                .catch(e => { console.log("something very bad has happened") });
+        }
+    }
+
+
     if (display) {
         return (
             <div className='change-theme' style={{backgroundColor: colors.headerButton}}>
@@ -34,7 +65,7 @@ export default function ChangeTheme({ colors, display, theme, updateTheme, env_H
                             {obj.name}
                         </div>
                         <div className='theme-image'>
-                            <img src={obj.backImg} 
+                            <img src={getBackImg(obj.backImg)} 
                                  alt="Triceratops" 
                                  onClick={() => updateTheme(obj)}
                                  width="80px"

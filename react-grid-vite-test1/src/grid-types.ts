@@ -1,6 +1,8 @@
 
+export type themeNames = "current" | "Theme 1" | "Theme 2" | "Theme 3" | "Theme 4"
+
 export type themeType = {
-    name: string,
+    name: themeNames,
     block: string, 
     header: string, 
     headerButton: string, 
@@ -40,8 +42,6 @@ export type colorType = {
 }
 
 export type unitType = "nameID"
-
-export type themeNames = "current" | "Theme 1" | "Theme 2" | "Theme 3" | "Theme 4"
 
 export type apiKeys = "blocks" | "nameID" | "theme";
 
