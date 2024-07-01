@@ -36,7 +36,7 @@ function App() {
   const [disSave, setDisSave] = useState(false);
   const [disBack, setDisBack] = useState(false);
   const [disWid, setDisWid] = useState(false);
-  const [theme, setTheme] = useState<themeType>({ name: "", block: "", header: "", headerButton: "", headerFont: "", 
+  const [theme, setTheme] = useState<themeType>({ name: "current", block: "", header: "", headerButton: "", headerFont: "", 
                                                   grid: "", editBox: "", editBoxFont: "", backImg: "" });
   const [bkgImgs, setBkgImgs] = useState<backImgType[]>([
     { id: "1", name: "Sample_Background_1", imgPath: "https://wallpapercave.com/wp/wp13129045.jpg"}, 
@@ -212,7 +212,7 @@ function App() {
     setAddBlocks([]);
     
     for (let i = 0; i < blocks2.length; i++) {
-      console.log(blocks2[i]);
+      //console.log(blocks2[i]);
       requestBlock(blocks2[i].data_grid.i, blocks2[i], "PUT");
     }
     console.log(blocks2);
@@ -220,11 +220,15 @@ function App() {
     updateThings("nameID", nameID.toString());
 
     const backgroundImage = {backImg: backImage.name};
-    const {name, ...oldColors} = theme;
-    const nameObj = {name: name};
-    const newTheme = {...nameObj, ...backgroundImage, ...colors}; 
-    updateTheme(newTheme, theme_name); 
-    updateTheme(newTheme, "current"); 
+    if (theme_name !== "current") {
+      const nameObj_A = {name: theme_name};
+      const newTheme_A = {...nameObj_A, ...backgroundImage, ...colors}; 
+      updateTheme(newTheme_A, theme_name); 
+    }
+    const curr_name : themeNames = "current";
+    const nameObj_C = {name: curr_name};
+    const newTheme_C = {...nameObj_C, ...backgroundImage, ...colors}; 
+    updateTheme(newTheme_C, "current"); 
   }
 
   async function requestBlock(i: string, block: blockType, type: httpRequestType) {
@@ -319,8 +323,11 @@ function App() {
           <HeaderPopup name="Add Widget" display={disWid} updateDisplay={setDisWid} colors={colors}/>
         )}
         <ColorPalette display={dispColPal} colors={colors} updateColors={setColors}/>
-        <ChangeTheme display={disTheme} colors={colors} theme={theme} updateTheme={chooseTheme} env_HOSTNAME={env_HOSTNAME}/>
-        <SaveTheme display={disSave} colors={colors} theme={theme} updateTheme={setTheme} saveGrid={saveGrid} env_HOSTNAME={env_HOSTNAME}/>
+        <ChangeTheme display={disTheme} colors={colors} theme={theme} updateTheme={chooseTheme} env_HOSTNAME={env_HOSTNAME} 
+                     bkgImgs={bkgImgs} updateBkgImgs={setBkgImgs} getImage={(img_name: string) => getImage(img_name)}/>
+        <SaveTheme display={disSave} colors={colors} theme={theme} updateTheme={setTheme} saveGrid={saveGrid} 
+                   env_HOSTNAME={env_HOSTNAME} bkgImgs={bkgImgs} getImage={(img_name: string) => getImage(img_name)} 
+                   updateBkgImgs={(newBkgImgs: backImgType[]) => setBkgImgs(newBkgImgs)}/>
         <ChangeBackground display={disBack} colors={colors} env_HOSTNAME={env_HOSTNAME} backImg={backImage} 
                           bkgImgs={bkgImgs} updateBackImg={updateBackground} 
                           updateBkgImgs={(newBkgImgs: backImgType[]) => setBkgImgs(newBkgImgs)}

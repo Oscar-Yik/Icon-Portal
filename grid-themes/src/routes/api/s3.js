@@ -144,6 +144,7 @@ router.get('/:i', (req, res) => {
             const response = await client.send(command);
             return response.Body;
         } catch (err) {
+            console.log("Error downloading from s3");
             throw err;
         }
     };
@@ -162,17 +163,21 @@ router.get('/:i', (req, res) => {
             .then(stream => {
                 // the .jpg is already renamed 
                 const writeStream = fs.createWriteStream(filePath);
-
-                stream.pipe(writeStream)
+                
+                return new Promise((resolve, reject) => {
+                    stream.pipe(writeStream)
                     .on('error', err => {
-                        res.status(500).json({ error: 'Internal Server Error', message: "Couldn't save file to project directory" });
+                        console.log("Can't find image");
+                        reject(err);
                     })
                     .on('finish', () => {
-                        // res.json({ message: "File saved successfully" });
-                        return absolutefilePath
+                        console.log("Downloaded image to backend");
+                        resolve(absolutefilePath);
                     });
+                })
             })
             .then((absolutefilePath) => {
+                // console.log(`Final absolute filepath: ${absolutefilePath}`);
                 res.setHeader('file_name', req.params.i);
                 res.sendFile(absolutefilePath, (err) => {
                     if (err) {

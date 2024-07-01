@@ -17,6 +17,8 @@ type updateBkgImgs = (newBkgImgs: backImgType[]) => void;
 
 type getFunction = (img_name: string) => Promise<string>; 
 
+type imageObject = { newImages: backImgType[], newBkgImgs: backImgType[] };
+
 type ChangeBackgroundProps = { 
     colors: colorType, display: boolean, env_HOSTNAME: string, backImg: backImgType,
     bkgImgs: backImgType[], updateBackImg: updateFunction, updateBkgImgs: updateBkgImgs, getImage: getFunction}
@@ -49,16 +51,24 @@ export default function ChangeBackground({ colors, display, env_HOSTNAME, backIm
     async function fetchImages(start_img: number, num_imgs: number) {
         try {
             const newImages: backImgType[] = [];
+            let newBkgImgs = bkgImgs.slice();
             for (let i = start_img; i < num_imgs; i++) {
                 const new_img_name = "Sample_Background_" + i + ".jpg";
-                const new_img = await getImage("Sample_Background_" + i + ".jpg");
-                newImages.push({
-                    id: i.toString(), 
-                    name: new_img_name, 
-                    imgPath: new_img
-                });
+                const existing_image = bkgImgs.find(img => img.name === new_img_name);
+                
+                if (existing_image) {
+                    newImages.push(existing_image);
+                    newBkgImgs = newBkgImgs.filter(img => img.name !== new_img_name);
+                } else {
+                    const new_img = await getImage("Sample_Background_" + i + ".jpg");
+                    newImages.push({
+                        id: i.toString(), 
+                        name: new_img_name, 
+                        imgPath: new_img
+                    });
+                }
             }
-            return newImages;
+            return { newImages: newImages, newBkgImgs: newBkgImgs };
         } catch (e) {
             throw e; 
         }
@@ -75,8 +85,10 @@ export default function ChangeBackground({ colors, display, env_HOSTNAME, backIm
         }
     }
     
-    function saveBkgImgs(new_imgs: backImgType[]) {
-        const newBackImgs = bkgImgs.concat(new_imgs);
+    function saveBkgImgs(newImageObject: imageObject) {
+        const new_imgs = newImageObject.newImages;
+        const newBkgImgs = newImageObject.newBkgImgs;
+        const newBackImgs = newBkgImgs.concat(new_imgs);
         updateBkgImgs(newBackImgs);
         setDisImgs(new_imgs);
     }
@@ -104,8 +116,8 @@ export default function ChangeBackground({ colors, display, env_HOSTNAME, backIm
                 setDisImgs(new_imgs);
             } else {
                 console.log(`Fetching ${num_imgs} images, Starting from image ${current_img+1}`); 
-                const new_imgs = await fetchImages(current_img+1, current_img + num_imgs + 1);
-                saveBkgImgs(new_imgs);
+                const newImageObject = await fetchImages(current_img+1, current_img + num_imgs + 1);
+                saveBkgImgs(newImageObject);
             }
         } catch (e) {
             console.log("Error: ", getErrorMessage(e));

@@ -7,7 +7,7 @@ const s3Routes = require("./routes/api/s3");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 
-const app = express();  
+const app = express(); 
 
 app.use(cors({ origin: true, credentials: true }));
 

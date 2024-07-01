@@ -5,3 +5,5 @@ declare module "MyFirstGridComponent";
 declare module "GridContainer";
 declare module "GridOverlay";
 declare module "ChangeBackground";
+declare module "ChangeTheme";
+declare module "SaveTheme";
