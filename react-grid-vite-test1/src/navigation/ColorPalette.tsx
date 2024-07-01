@@ -1,14 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import "../utils/Background.css";
 
-export default function ColorPalette({ colors, display, updateColors }) {
+import { colorType, colorOptions } from './../grid-types';
 
-    const [colorArr, setColorArr] = useState([]);
+type updateColorsFn = (colors: colorType) => void;
+
+type ColorPaletteProps = { colors: colorType, display: boolean, updateColors: updateColorsFn }
+
+type colorArrayType = { type: colorOptions, url: string };
+
+export default function ColorPalette({ colors, display, updateColors }: ColorPaletteProps) {
+
+    const [colorArr, setColorArr] = useState<colorArrayType[]>([]);
 
     useEffect(() => {
         if (display) {
-            const colorsArray = Object.entries(colors).map(([key, value]) => ({
-                type: key, 
+            const colorsArray: colorArrayType[] = Object.entries(colors).map(([key, value]) => ({
+                type: key as colorOptions, 
                 url: value
             }));
             setColorArr(colorsArray); 
@@ -17,7 +25,7 @@ export default function ColorPalette({ colors, display, updateColors }) {
     }, [display]);
 
 
-    function handleColorChange(event, key) {
+    function handleColorChange(event: React.ChangeEvent<HTMLInputElement>, key: colorOptions) {
         let newColor = { ...colors };
         // const index = newColor.findIndex(obj => obj.type === key);
         // if (index !== -1) {

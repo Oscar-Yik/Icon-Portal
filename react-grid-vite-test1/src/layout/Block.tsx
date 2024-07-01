@@ -5,13 +5,20 @@ import getConstants from '../utils/Constants';
 
 import '../utils/Background.css'
 
-export default function Block ({block, removeBlock, onUpdateEdit}) {
+import { blockType } from './../grid-types';
+
+type removeFunction = (id: string) => void;
+
+type editFunction = (i: string, bool: boolean) => void;
+
+type BlockProps = { block: blockType, removeBlock: removeFunction, onUpdateEdit: editFunction };
+
+export default function Block ({block, removeBlock, onUpdateEdit} : BlockProps) {
     
     const { defaultRowHeight } = getConstants();
 
     return (
-        <div width={block.data_grid.w*defaultRowHeight} 
-             height={block.data_grid.h*defaultRowHeight}>
+        <div style={{width: `${block.data_grid.w*defaultRowHeight}`, height: `${block.data_grid.h*defaultRowHeight}`}}>
           {(block.data_grid.h === 1) ?
             <DeleteIcon className="small-delete" onClick={() => removeBlock(block.data_grid.i)}/>
             :

@@ -62,3 +62,9 @@ export type displayIcons = {
 }
 
 export type metadata = { name: string, data: number }
+
+export type updateBkgImgs = (newBkgImgs: backImgType[]) => void;
+
+export type getFunction = (img_name: string) => Promise<string>; 
+
+export type colorOptions = "block" | "header" | "headerButton" | "headerFont" | "grid" | "editBox" | "editBoxFont"; 

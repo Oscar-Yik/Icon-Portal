@@ -3,8 +3,15 @@ import "../utils/Background.css";
 import youtubeMusicIcon from '../assets/youtube-music-icon.png';
 import asuraScans from '../assets/asura-scans.png';
 
+import { blockType, blockModalType, colorType, updateBlocks2Fn, updateEditFn } from './../grid-types';
 
-export default function AddWidget({ colors, display, blocks2, addBlocks, edit, updateAddBlocks, updateEdit, updateBlocks }) {
+type updateAddBlocksFn = (addBlocks: blockType[]) => void;
+
+type AddWidgetProps = { blocks2: blockType[], addBlocks: blockType[], edit: blockModalType[], 
+    updateBlocks: updateBlocks2Fn, updateAddBlocks: updateAddBlocksFn, 
+    updateEdit: updateEditFn, colors: colorType, display: boolean }
+
+export default function AddWidget({ colors, display, blocks2, addBlocks, edit, updateAddBlocks, updateEdit, updateBlocks } : AddWidgetProps) {
 
     async function addYoutube() {
         const newBlock2 = { data_grid: { i: "Youtube", 

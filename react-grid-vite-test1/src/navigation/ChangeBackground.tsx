@@ -9,13 +9,9 @@ import successIcon from '../assets/successful-download.svg';
 import EditableTextItem from '../utils/EditableText';
 import getErrorMessage from '../utils/Errors';
 
-import { colorType, backImgType, displayIcons, metadata } from './../grid-types';
+import { colorType, backImgType, displayIcons, updateBkgImgs, getFunction } from './../grid-types';
 
 type updateFunction = (trash: any, newImg: string) => void;
-
-type updateBkgImgs = (newBkgImgs: backImgType[]) => void;
-
-type getFunction = (img_name: string) => Promise<string>; 
 
 type imageObject = { newImages: backImgType[], newBkgImgs: backImgType[] };
 

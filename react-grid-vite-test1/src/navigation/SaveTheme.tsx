@@ -1,15 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import "../utils/Background.css";
 
-import { colorType, backImgType, themeType, themeNames } from './../grid-types';
+import { colorType, backImgType, themeType, themeNames, updateBkgImgs, getFunction } from './../grid-types';
 
 type saveFunction = (theme_name: themeNames) => void;
 
 type updateTheme = (newTheme: themeType) => void;
-
-type updateBkgImgs = (newBkgImgs: backImgType[]) => void;
-
-type getFunction = (img_name: string) => Promise<string>; 
 
 type SaveThemeProps = { 
     colors: colorType, display: boolean, theme: themeType, updateTheme: updateTheme, env_HOSTNAME: string,

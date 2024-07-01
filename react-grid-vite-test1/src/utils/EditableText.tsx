@@ -2,16 +2,22 @@
 import React, { useState, useRef, useEffect } from 'react';
 import "./Background.css";
 
-const EditableTextItem = ({ initialText, id, onStateChange, colors }) => {
+import { blockType, blockModalType, colorType, updateBlocks2Fn, updateEditFn } from './../grid-types';
+
+type onStateChangeFn = (trash: any, text: string) => void;
+
+type EditTextItemProps = { initialText: string, id: string, colors: colorType, onStateChange: onStateChangeFn }
+
+const EditableTextItem = ({ initialText, id, onStateChange, colors } : EditTextItemProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [text, setText] = useState(initialText);
-  const inputRef = useRef(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleDoubleClick = () => {
     setIsEditing(true);
   };
 
-  const handleChange = (event) => {
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setText(event.target.value);
     onStateChange(id, text);
   };
@@ -23,7 +29,7 @@ const EditableTextItem = ({ initialText, id, onStateChange, colors }) => {
 
   // Focus the input field when editing starts
   useEffect(() => {
-    if (isEditing) {
+    if (isEditing && inputRef.current) {
       inputRef.current.focus();
     }
   }, [isEditing]);

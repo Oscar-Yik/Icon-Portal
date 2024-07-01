@@ -1,7 +1,13 @@
 import React from 'react';
 import "../utils/Background.css";
 
-export default function HeaderPopup({ name, display, updateDisplay, colors }) {
+import { colorType } from './../grid-types';
+
+type updateDisplayFn = (display: boolean) => void;
+
+type HeaderPopupProps = { name: string, colors: colorType, display: boolean, updateDisplay: updateDisplayFn }
+
+export default function HeaderPopup({ name, display, updateDisplay, colors } : HeaderPopupProps) {
     return(
         <li className='navItem' 
               style={{backgroundColor: colors.headerButton, 

@@ -1,7 +1,18 @@
 import React from 'react';
 import "../utils/Background.css";
+import { blockType, blockModalType, colorType, updateBlocks2Fn, updateEditFn } from './../grid-types';
 
-export default function AddBlock({ blocks2, addBlocks, nameID, edit, updateBlocks, updateAddBlocks, updateNameID, updateEdit, colors }) {
+type updateAddBlocksFn = (addBlocks: blockType[]) => void;
+
+type nameIDFunction = (nameID: number) => void;
+
+type AddBlockProps = { blocks2: blockType[], addBlocks: blockType[], nameID: number, edit: blockModalType[], 
+    updateBlocks: updateBlocks2Fn, updateAddBlocks: updateAddBlocksFn, updateNameID: nameIDFunction, 
+    updateEdit: updateEditFn, colors: colorType }
+
+export default function AddBlock({ 
+    blocks2, addBlocks, nameID, edit, updateBlocks, 
+    updateAddBlocks, updateNameID, updateEdit, colors } : AddBlockProps) {
     function addBlock() {
         const newBlock2 = { data_grid: { i: `block ${nameID}`, 
                                          x: 0, 
