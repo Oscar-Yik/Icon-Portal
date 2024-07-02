@@ -1,6 +1,6 @@
 // models/Theme.js
 
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const ThemeSchema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -14,4 +14,4 @@ const ThemeSchema = new mongoose.Schema({
   backImg: { type: String, required: true }
 });
 
-module.exports = Theme = mongoose.model('theme', ThemeSchema);
+export default mongoose.model('theme', ThemeSchema);

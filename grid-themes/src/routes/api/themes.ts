@@ -1,10 +1,11 @@
 // routes/api/themes.js
 
-const express = require('express');
+import express, { Request, Response } from 'express';
 const router = express.Router();
 
 // Load Theme model
-const Theme = require('../../models/Theme');
+// const Theme = require('../../models/Theme');
+import Theme from '../../models/Theme';
 
 // @route   GET api/themes/test
 // @desc    Tests themes route
@@ -67,4 +68,4 @@ router.delete('/:i', (req, res) => {
     .catch(err => res.status(404).json({ error: 'No such a Theme' }));
 });
 
-module.exports = router;
+export default router;
