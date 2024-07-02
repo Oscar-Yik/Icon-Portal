@@ -17,7 +17,13 @@ const connectDB = async () => {
     await mongoose.connect(db);
     console.log("MongoDB is Connected...");
   } catch (err) {
-    console.error(err.message);
+    if (err instanceof Error) {
+      // If the error is an instance of the built-in Error class
+      console.error("Error message:", err.message);
+    } else {
+      // For other types of errors (e.g., non-Error objects, strings, etc.)
+      console.error("Unexpected error:", err);
+    }
     process.exit(1);
   }
 };

@@ -10,11 +10,19 @@ import fs from 'fs';
 import multer from 'multer';
 import { NodeJsClient } from "@smithy/types";
 
+const region = process.env.AWS_REGION || ""; 
+const accessKeyId = process.env.AWS_ACCESS_KEY || "";
+const secretAccessKey = process.env.AWS_SECRET_KEY || "";
+
+if (!region || !accessKeyId || !secretAccessKey) {
+    throw new Error("AWS configuration environment variables are missing!");
+}
+
 const client = new S3Client({
-    region: process.env.AWS_REGION,
+    region: region,
     credentials: {
-        accessKeyId: process.env.AWS_ACCESS_KEY,
-        secretAccessKey: process.env.AWS_SECRET_KEY
+        accessKeyId: accessKeyId,
+        secretAccessKey: secretAccessKey
     }
 }) as NodeJsClient<S3Client>;
 
@@ -89,36 +97,36 @@ router.put('/metadata/:i', (req, res) => {
   });
 
 
-async function listObjects() {
-    // listObjects()
-    //     .then(test => res.json(test))
-    //     .catch(err => res.status(500).json({ error: 'Internal Server Error' }));
-    const command = new ListObjectsV2Command({
-        Bucket: process.env.AWS_S3_BUCKET_NAME,
-        MaxKeys: 5,
-        // Prefix: "videos/"
-    });
+// async function listObjects() {
+//     // listObjects()
+//     //     .then(test => res.json(test))
+//     //     .catch(err => res.status(500).json({ error: 'Internal Server Error' }));
+//     const command = new ListObjectsV2Command({
+//         Bucket: process.env.AWS_S3_BUCKET_NAME,
+//         MaxKeys: 5,
+//         // Prefix: "videos/"
+//     });
     
-    try {
-        let isTruncated = true;
+//     try {
+//         let isTruncated = true;
     
-        console.log("Your bucket contains the following objects:\n");
-        let contents = [];
+//         console.log("Your bucket contains the following objects:\n");
+//         let contents = [];
     
-        while (isTruncated) {
-        const { Contents, IsTruncated, NextContinuationToken } =
-            await client.send(command);
-        // const contentsList = Contents.map((c) => ` • ${c.Key}`).join("\n");
-        contents.push(Contents.map((c) => c.Key));
-        isTruncated = IsTruncated;
-        command.input.ContinuationToken = NextContinuationToken;
-        }
-        return contents
-    } catch (err) {
-        console.log(err);
-        return [];
-    }
-}
+//         while (isTruncated) {
+//         const { Contents, IsTruncated, NextContinuationToken } =
+//             await client.send(command);
+//         // const contentsList = Contents.map((c) => ` • ${c.Key}`).join("\n");
+//         contents.push(Contents.map((c) => c.Key));
+//         isTruncated = IsTruncated;
+//         command.input.ContinuationToken = NextContinuationToken;
+//         }
+//         return contents
+//     } catch (err) {
+//         console.log(err);
+//         return [];
+//     }
+// }
 
 async function getNewName() {
     try {
@@ -170,15 +178,19 @@ router.get('/:i', (req, res) => {
                 const writeStream = fs.createWriteStream(filePath);
                 
                 return new Promise((resolve, reject) => {
-                    stream.pipe(writeStream)
-                    .on('error', err => {
-                        console.log("Can't find image");
-                        reject(err);
-                    })
-                    .on('finish', () => {
-                        console.log("Downloaded image to backend");
-                        resolve(absolutefilePath);
-                    });
+                    if(stream) {
+                        stream.pipe(writeStream)
+                        .on('error', err => {
+                            console.log("Can't find image");
+                            reject(err);
+                        })
+                        .on('finish', () => {
+                            console.log("Downloaded image to backend");
+                            resolve(absolutefilePath);
+                        });
+                    } else {
+                        reject(new Error("No stream returned from getCommand()"));
+                    }
                 })
             })
             .then((absolutefilePath) => {
@@ -231,26 +243,30 @@ async function makePostRequest(file_name: string, is_url: boolean) : Promise<str
 // @desc    upload image to nodeJS application
 // @access  Public
 router.post('/sendImage', upload.single('file'), (req, res) => {
-    const fileBuffer = req.file.buffer;
-    const originalName = req.file.originalname;
-    
-    // Define the path where you want to save the file
-    const filePath = "assets/upload/" + originalName;
+    if (req.file) {
+        const fileBuffer = req.file.buffer;
+        const originalName = req.file.originalname;
+        
+        // Define the path where you want to save the file
+        const filePath = "assets/upload/" + originalName;
 
-    if (fs.existsSync(filePath)) {
-        res.status(400).json({ error: "Bad Request", message: "File already exists" });
+        if (fs.existsSync(filePath)) {
+            res.status(400).json({ error: "Bad Request", message: "File already exists" });
+        } else {
+            // Save the file buffer to a file
+            fs.writeFile(filePath, fileBuffer, (err) => {
+                if (err) {
+                    console.log('Error saving file');
+                    return res.status(500).send('Error saving file');
+                }
+                // res.status(200).json({message: "File uploaded successfully" });
+                makePostRequest(originalName, false)
+                    .then(data => res.status(200).json({ message: `File ${originalName} uploaded successfully`, data: data }))
+                    .catch(e => res.status(500).json({ error: "Internal Service Error", message: "Couldn't upload to s3" }));
+            });
+        }
     } else {
-        // Save the file buffer to a file
-        fs.writeFile(filePath, fileBuffer, (err) => {
-            if (err) {
-                console.log('Error saving file');
-                return res.status(500).send('Error saving file');
-            }
-            // res.status(200).json({message: "File uploaded successfully" });
-            makePostRequest(originalName, false)
-                .then(data => res.status(200).json({ message: `File ${originalName} uploaded successfully`, data: data }))
-                .catch(e => res.status(500).json({ error: "Internal Service Error", message: "Couldn't upload to s3" }));
-        });
+        res.status(400).json({ error: "Bad Request", message: "No file received from client"})
     }
 })
 
@@ -314,7 +330,9 @@ router.post('/', (req, res) => {
                 img_name = new_name;
                 image_path = 'assets/upload/' + new_name;
                 return 'assets/upload/' + new_name;
-            } 
+            } else {
+                throw new Error("No url was given");
+            }
         } catch (e) {
             // console.log(e);
             throw new Error("Couldn't download image");
@@ -372,7 +390,11 @@ router.post('/', (req, res) => {
 
                 res.json(response);
             } catch (e) {
-                res.status(500).json({ error: "Internal Service Error", message: e.message });
+                if (e instanceof Error) {
+                    res.status(500).json({ error: "Internal Service Error", message: e.message });
+                } else {
+                    res.status(500).json({ error: "Internal Service Error", message: "Error is not an error object" });
+                }
             }
         })
         .catch(err => res.status(500).json({ error: "Internal Service Error", message: "Couldn't return response" }));

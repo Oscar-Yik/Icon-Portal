@@ -1,8 +1,8 @@
-const express = require('express');
-const cors = require("cors");
-const { createProxyMiddleware, responseInterceptor } = require('http-proxy-middleware');
-const { JSDOM } = require('jsdom');
-const bodyParser = require('body-parser');
+import express from 'express';
+import cors from "cors";
+import { createProxyMiddleware, responseInterceptor } from 'http-proxy-middleware';
+import { JSDOM } from 'jsdom';
+import bodyParser from 'body-parser';
 
 // Configuration
 const PORT = 3000;
@@ -15,7 +15,7 @@ app.use(cors({ origin: true, credentials: true }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-function processURL(html, target_url) {
+function processURL(html: string, target_url: string): string {
     const dom = new JSDOM(html);
     const doc = dom.window.document; 
     // console.log(html);
@@ -23,7 +23,13 @@ function processURL(html, target_url) {
     if (iconTag) {
       const img = iconTag.getAttribute('href');
       console.log('Icon tag found');
-      const gotImage = getImage(img, target_url);
+      let gotImage = "";
+      if (img) {
+        gotImage = getImage(img, target_url);
+      } else {
+        gotImage = target_url + "/favicon.ico";
+        console.log('Icon tag href not found: ', iconTag);
+      }
       return gotImage; 
     } else {
       console.log('Icon tag not found: ', iconTag);
@@ -31,9 +37,9 @@ function processURL(html, target_url) {
     }
 }
 
-function getImage(icon, iconURl) {
+function getImage(icon: string, iconURl: string): string {
     if (icon) {
-      let parts = "";
+      let parts: string | string[] = "";
       if (icon.substring(0,4) !== "http")  {
         parts = iconURl.split('/');
         if (parts.length >= 4) {
@@ -52,7 +58,7 @@ function getImage(icon, iconURl) {
 
 // Proxy endpoints
 app.use('/icon_url', (req, res) => {
-    const target_url = req.query.i;
+    const target_url = req.query.i as string;
     console.log(target_url);
     const proxy = createProxyMiddleware({
         target: target_url,
