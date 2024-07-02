@@ -1,11 +1,11 @@
 // app.js
 
-const express = require("express");
-const connectDB = require("./config/db");
-const themeRoutes = require("./routes/api/themes");
-const s3Routes = require("./routes/api/s3");
-const cors = require("cors");
-const bodyParser = require("body-parser");
+import express from "express";
+import connectDB from "./config/db";
+import themeRoutes from "./routes/api/themes";
+import s3Routes from "./routes/api/s3";
+import cors from "cors";
+import bodyParser from "body-parser";
 
 const app = express(); 
 

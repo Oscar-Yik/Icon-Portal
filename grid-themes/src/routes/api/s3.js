@@ -1,27 +1,32 @@
 // routes/api/s3.js
-const { GetObjectCommand, ListObjectsV2Command, PutObjectCommand, S3Client } = require("@aws-sdk/client-s3");
-require('dotenv').config({ path: __dirname + "/../../.env" });
-const express = require('express');
-const path = require('path');
-const https = require('https');
-const http = require('http');
+import { GetObjectCommand, ListObjectsV2Command, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+require('dotenv').config({ path: __dirname + "/../../../.env" });
+import express from 'express';
+import path from 'path';
+import https from 'https';
+import http from 'http';
 const router = express.Router();
-const fs = require('fs');
-const multer = require('multer');
+import fs from 'fs';
+import multer from 'multer';
+import { NodeJsClient } from "@smithy/types";
+
 const client = new S3Client({
     region: process.env.AWS_REGION,
     credentials: {
         accessKeyId: process.env.AWS_ACCESS_KEY,
         secretAccessKey: process.env.AWS_SECRET_KEY
     }
-});
+}) as NodeJsClient<S3Client>;
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 // Load ImagePath and Metadata models
-const ImagePath = require('../../models/ImagePath');
-const Metadata = require('../../models/Metadata');
+// const ImagePath = require('../../models/ImagePath');
+// const Metadata = require('../../models/Metadata');
+
+import ImagePath from '../../models/ImagePath';
+import Metadata from '../../models/Metadata';
 
 // @route   GET api/s3/test
 // @desc    Tests s3 route
@@ -132,7 +137,7 @@ router.get('/:i', (req, res) => {
     // given the name in MongoDB,
     // get image from s3
     const filePath = 'assets/download/' + req.params.i;
-    const absolutefilePath = path.join(__dirname.slice(0,-11), filePath); 
+    const absolutefilePath = path.join(__dirname.slice(0,-15), filePath); 
 
     async function getCommand() {
         try {
@@ -160,7 +165,7 @@ router.get('/:i', (req, res) => {
         });
     } else {
         getCommand()
-            .then(stream => {
+            .then((stream) : Promise<string> => {
                 // the .jpg is already renamed 
                 const writeStream = fs.createWriteStream(filePath);
                 
@@ -192,7 +197,7 @@ router.get('/:i', (req, res) => {
     }
 });
 
-async function makePostRequest(file_name, is_url) {
+async function makePostRequest(file_name: string, is_url: boolean) : Promise<string> {
     return new Promise((resolve, reject) => {
         console.log("trying to make post request to s3");
         const body = JSON.stringify({ "img_name": file_name, "is_url": is_url });
@@ -230,7 +235,7 @@ router.post('/sendImage', upload.single('file'), (req, res) => {
     const originalName = req.file.originalname;
     
     // Define the path where you want to save the file
-    const filePath = "./assets/upload/" + originalName;
+    const filePath = "assets/upload/" + originalName;
 
     if (fs.existsSync(filePath)) {
         res.status(400).json({ error: "Bad Request", message: "File already exists" });
@@ -281,7 +286,7 @@ router.post('/', (req, res) => {
 
     console.log(`Making s3 post request on: ${image_path}`);
 
-    function downloadImage(image_url, image_path) {
+    function downloadImage(image_url: string, image_path: string) : Promise<string> {
         return new Promise((resolve, reject) => {
             const file = fs.createWriteStream(image_path);
     
@@ -301,7 +306,7 @@ router.post('/', (req, res) => {
         });
     }
 
-    async function check_url(is_url) {
+    async function check_url(is_url: string) : Promise<string> {
         try {
             if (is_url) {
                 const new_name = await getNewName();
@@ -374,4 +379,4 @@ router.post('/', (req, res) => {
 
 });
 
-module.exports = router;
+export default router;
