@@ -11,8 +11,8 @@ import multer from 'multer';
 import { NodeJsClient } from "@smithy/types";
 
 const region = process.env.AWS_REGION || ""; 
-const accessKeyId = process.env.AWS_ACCESS_KEY || "";
-const secretAccessKey = process.env.AWS_SECRET_KEY || "";
+const accessKeyId = process.env.AWS_ACCESS_KEY_NODE || "";
+const secretAccessKey = process.env.AWS_SECRET_KEY_NODE || "";
 
 if (!region || !accessKeyId || !secretAccessKey) {
     throw new Error("AWS configuration environment variables are missing!");
@@ -151,7 +151,7 @@ router.get('/:i', (req, res) => {
         try {
             const imgPath = await ImagePath.find({ name: req.params.i}).select('-_id -__v');
             const command = new GetObjectCommand({
-                Bucket: process.env.AWS_S3_BUCKET_NAME,
+                Bucket: process.env.AWS_S3_BUCKET_NAME_IMAGES,
                 Key: imgPath[0].img_path,
             });
             const response = await client.send(command);
@@ -215,7 +215,7 @@ async function makePostRequest(file_name: string, is_url: boolean) : Promise<str
         const body = JSON.stringify({ "img_name": file_name, "is_url": is_url });
 
         const options = {
-            hostname: process.env.env_HOSTNAME, 
+            hostname: (process.env.VITE_THEMES_IP) ? (process.env.VITE_THEMES_IP) : ("grid-themes-service"), 
             port: 8082, 
             path: "/api/s3",
             method: "POST", 
@@ -345,7 +345,7 @@ router.post('/', (req, res) => {
             const fileContent = fs.readFileSync(image_path);
                 
             const command = new PutObjectCommand({
-              Bucket: process.env.AWS_S3_BUCKET_NAME,
+              Bucket: process.env.AWS_S3_BUCKET_NAME_IMAGES,
               Key: "images/" + img_name,
               Body: Buffer.from(fileContent),
             });

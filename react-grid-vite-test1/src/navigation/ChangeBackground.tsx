@@ -16,17 +16,20 @@ type updateFunction = (trash: any, newImg: string) => void;
 type imageObject = { newImages: backImgType[], newBkgImgs: backImgType[] };
 
 type ChangeBackgroundProps = { 
-    colors: colorType, display: boolean, env_HOSTNAME: string, backImg: backImgType,
+    colors: colorType, display: boolean, backImg: backImgType,
     bkgImgs: backImgType[], updateBackImg: updateFunction, updateBkgImgs: updateBkgImgs, getImage: getFunction}
 
 type IconNumber = 0 | 1 | 2;
 
-export default function ChangeBackground({ colors, display, env_HOSTNAME, backImg, bkgImgs, updateBackImg, updateBkgImgs, getImage } : ChangeBackgroundProps) {
+export default function ChangeBackground({ colors, display, backImg, bkgImgs, updateBackImg, updateBkgImgs, getImage } : ChangeBackgroundProps) {
 
     const [disIcons, setDisIcons] = useState<displayIcons>({ next: false, upload: false, edit: false });
     const [disImgs, setDisImgs] = useState<backImgType[]>([]);
     const [textImage, setTextimage] = useState<string>("Double Click to Enter Image URL");
     const [textImageIcon, setTextimageIcon] = useState<IconNumber>(1);
+
+    const theme_IP = (import.meta.env.VITE_THEMES_IP) ? 
+        (import.meta.env.VITE_THEMES_IP) : ("grid-themes-service");
 
     useEffect(() => {
         setDisImgs(bkgImgs);
@@ -91,7 +94,7 @@ export default function ChangeBackground({ colors, display, env_HOSTNAME, backIm
 
     async function getNextImgs() {
         try {
-            const response = await fetch(`http://${env_HOSTNAME}:8082/api/s3/metadata/img_count`, { method: 'GET' }); 
+            const response = await fetch(`http://${theme_IP}:8082/api/s3/metadata/img_count`, { method: 'GET' }); 
             if (!response.ok) {
                 throw new Error("Couldn't get img_count");
             }
@@ -164,7 +167,7 @@ export default function ChangeBackground({ colors, display, env_HOSTNAME, backIm
             formData.append('file', file);
 
             // send a new request to a new endpoint with the file 
-            const response = await fetch(`http://${env_HOSTNAME}:8082/api/s3/sendImage`, { 
+            const response = await fetch(`http://${theme_IP}:8082/api/s3/sendImage`, { 
                 method: 'POST', 
                 body: formData
             }); 
@@ -183,7 +186,7 @@ export default function ChangeBackground({ colors, display, env_HOSTNAME, backIm
     async function uploadTextImage() {
         try {
             const payload = { url: textImage };
-            const response = await fetch(`http://${env_HOSTNAME}:8082/api/s3/sendImageURL`, { 
+            const response = await fetch(`http://${theme_IP}:8082/api/s3/sendImageURL`, { 
                 headers: {
                     "Content-Type": "application/json"
                 },

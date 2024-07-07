@@ -28,7 +28,8 @@ export default function VideoDownloader ({block, removeBlock, colors} : VideoDow
     const [pathes, setPathes] = useState([]);
     const { defaultRowHeight, colWidth } = getConstants();
 
-    const env_HOSTNAME = import.meta.env.VITE_HOSTNAME;
+    const widget_IP = (import.meta.env.VITE_WIDGET_IP) ? 
+        (import.meta.env.VITE_WIDGET_IP) : ("grid-media-service");
 
     function downloadVideo() {
         videos.forEach((video) => {
@@ -38,7 +39,7 @@ export default function VideoDownloader ({block, removeBlock, colors} : VideoDow
 
     async function downloadSingleVideo(video: string) {
         try {
-            const response = await fetch(`http://${env_HOSTNAME}:3001/youtube?title=${video}`, 
+            const response = await fetch(`http://${widget_IP}:3001/youtube?title=${video}`, 
                                     {method: 'GET'});
             const blob = await response.blob();
             const objectURL = window.URL.createObjectURL(blob);
@@ -77,7 +78,7 @@ export default function VideoDownloader ({block, removeBlock, colors} : VideoDow
         try {
             const youtube_url = { url: link };
             const header = {'Content-Type' : 'application/json'};
-            const response = await fetch(`http://${env_HOSTNAME}:3001/youtube?playlist=false`, 
+            const response = await fetch(`http://${widget_IP}:3001/youtube?playlist=false`, 
                                     {method: 'POST', headers: header, body: JSON.stringify(youtube_url)});
             if (!response.ok) {
                 throw new Error();

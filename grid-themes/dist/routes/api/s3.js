@@ -23,8 +23,8 @@ const router = express_1.default.Router();
 const fs_1 = __importDefault(require("fs"));
 const multer_1 = __importDefault(require("multer"));
 const region = process.env.AWS_REGION || "";
-const accessKeyId = process.env.AWS_ACCESS_KEY || "";
-const secretAccessKey = process.env.AWS_SECRET_KEY || "";
+const accessKeyId = process.env.AWS_ACCESS_KEY_NODE || "";
+const secretAccessKey = process.env.AWS_SECRET_KEY_NODE || "";
 if (!region || !accessKeyId || !secretAccessKey) {
     throw new Error("AWS configuration environment variables are missing!");
 }
@@ -146,7 +146,7 @@ router.get('/:i', (req, res) => {
             try {
                 const imgPath = yield ImagePath_1.default.find({ name: req.params.i }).select('-_id -__v');
                 const command = new client_s3_1.GetObjectCommand({
-                    Bucket: process.env.AWS_S3_BUCKET_NAME,
+                    Bucket: process.env.AWS_S3_BUCKET_NAME_IMAGES,
                     Key: imgPath[0].img_path,
                 });
                 const response = yield client.send(command);
@@ -339,7 +339,7 @@ router.post('/', (req, res) => {
                 yield check_url(req.body.is_url);
                 const fileContent = fs_1.default.readFileSync(image_path);
                 const command = new client_s3_1.PutObjectCommand({
-                    Bucket: process.env.AWS_S3_BUCKET_NAME,
+                    Bucket: process.env.AWS_S3_BUCKET_NAME_IMAGES,
                     Key: "images/" + img_name,
                     Body: Buffer.from(fileContent),
                 });

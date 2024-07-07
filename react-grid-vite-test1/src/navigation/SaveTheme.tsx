@@ -8,13 +8,15 @@ type saveFunction = (theme_name: themeNames) => void;
 type updateTheme = (newTheme: themeType) => void;
 
 type SaveThemeProps = { 
-    colors: colorType, display: boolean, theme: themeType, updateTheme: updateTheme, env_HOSTNAME: string,
+    colors: colorType, display: boolean, theme: themeType, updateTheme: updateTheme,
     bkgImgs: backImgType[], updateBkgImgs: updateBkgImgs, getImage: getFunction, saveGrid: saveFunction }
 
-export default function SaveTheme({ colors, display, theme, updateTheme, saveGrid, env_HOSTNAME, bkgImgs, 
+export default function SaveTheme({ colors, display, theme, updateTheme, saveGrid, bkgImgs, 
                                     updateBkgImgs, getImage } : SaveThemeProps) {
 
     const [allThemes, setAllThemes] = useState<themeType[]>([]);
+    const theme_IP = (import.meta.env.VITE_THEMES_IP) ? 
+        (import.meta.env.VITE_THEMES_IP) : ("grid-themes-service");
 
     useEffect(() => {
         if (display) {
@@ -24,7 +26,7 @@ export default function SaveTheme({ colors, display, theme, updateTheme, saveGri
 
     async function fetchThemes() {
         try {
-            const response = await fetch(`http://${env_HOSTNAME}:8082/api/themes`, {method: "GET"});
+            const response = await fetch(`http://${theme_IP}:8082/api/themes`, {method: "GET"});
             if (!response.ok) {
               console.log("Bad Query: fetchThemes()");
             }

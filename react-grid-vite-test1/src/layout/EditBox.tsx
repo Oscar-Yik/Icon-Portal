@@ -7,19 +7,21 @@ import { blockType, colorType, updateBlocks2Fn, blockModalType, updateEditFn } f
 import '../utils/Background.css'
 
 type EditBoxProps = { 
-    blocks2: blockType[], updateBlocks2: updateBlocks2Fn, colors: colorType, env_HOSTNAME: string, 
+    blocks2: blockType[], updateBlocks2: updateBlocks2Fn, colors: colorType
     showEdit: blockModalType[], updateEdit: updateEditFn
 };
 
-export default function EditBox({showEdit, updateEdit, blocks2, updateBlocks2, colors, env_HOSTNAME} : EditBoxProps) {
+export default function EditBox({showEdit, updateEdit, blocks2, updateBlocks2, colors } : EditBoxProps) {
 
     const { defaultRowHeight, margins, colWidth } = getConstants();
+    const icon_IP = (import.meta.env.VITE_ICON_IP) ? 
+        (import.meta.env.VITE_ICON_IP) : ("icon-proxy-server-service");
 
     async function fetchIcons(url: string) {
         try {
             const img_url = url.replace(/\//g, '%2F');
             console.log(img_url);
-            const response = await fetch(`http://${env_HOSTNAME}:3000/icon_url?i=${img_url}`);
+            const response = await fetch(`http://${icon_IP}:3000/icon_url?i=${img_url}`);
             if (!response.ok) {
               console.log("Bad Query: fetchIcons()");
             }

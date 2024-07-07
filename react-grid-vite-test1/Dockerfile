@@ -7,6 +7,9 @@ WORKDIR /app
 # Copy the package.json file to my current directory to install the necessary dependence  
 COPY package.json .
 
+# download curl 
+RUN apk --no-cache add curl
+
 # Install the dependence
 RUN npm install
 

@@ -2,3 +2,9 @@
 .venv
 .env
 data
+grid-secret.yaml
+grid-client.yaml
+grid-layout.yaml
+grid-themes.yaml
+icon-proxy-server.yaml
+grid-media.yaml

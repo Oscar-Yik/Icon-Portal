@@ -26,7 +26,7 @@ function App() {
   const [delBlocks, setDelBlocks] = useState<blockType[]>([]);
   const [addBlocks, setAddBlocks] = useState<blockType[]>([]);
 
-  const [backImage, setBackImg] = useState<backImgType>({ id: "current", name: "Sample_Background_2", imgPath: "./src/assets/images/Sample_Background_1.jpg" });
+  const [backImage, setBackImg] = useState<backImgType>({ id: "current", name: "TRASH", imgPath: "https://images3.alphacoders.com/135/1350069.jpeg" });
   const [edit, setEdit] = useState<blockModalType[]>([]);
   const [nameID, setNameID] = useState(0);
   const [colors, setColors] = useState<colorType>({ block: "", header: "", headerButton: "", headerFont: "", 
@@ -40,26 +40,30 @@ function App() {
                                                   grid: "", editBox: "", editBoxFont: "", backImg: "" });
   const [bkgImgs, setBkgImgs] = useState<backImgType[]>([
     { id: "1", name: "Sample_Background_1", imgPath: "https://wallpapercave.com/wp/wp13129045.jpg"}, 
-    { id: "2", name: "Sample_Background_2", imgPath: "./src/assets/images/Sample_Background_1.jpg" }, 
-    { id: "3", name: "Sample_Background_3", imgPath: "./src/assets/images/Sample_Background_2.jpg" }, 
+    { id: "2", name: "Sample_Background_2", imgPath: "https://wallpapercave.com/wp/wp13129045.jpg" }, 
+    { id: "3", name: "Sample_Background_3", imgPath: "https://wallpapercave.com/wp/wp13129045.jpg" }, 
     { id: "4", name: "Sample_Background_4", imgPath: "https://wallpapercave.com/wp/wp13129045.jpg" }, 
     { id: "5", name: "Sample_Background_5", imgPath: "https://wallpapercave.com/wp/wp13129045.jpg" }])
 
   const navigate = useNavigate();
   const location = useLocation();
 
-  const env_HOSTNAME = import.meta.env.VITE_HOSTNAME;
+  const layout_IP = (import.meta.env.VITE_LAYOUT_IP) ? 
+    (import.meta.env.VITE_LAYOUT_IP) : ("grid-layout-service");
+
+  const theme_IP = (import.meta.env.VITE_THEMES_IP) ? 
+    (import.meta.env.VITE_THEMES_IP) : ("grid-themes-service");
 
   async function fetchData(name: apiKeys) {
     try {
       // console.log("call: ", `http://${env_HOSTNAME}:8092/api/blocks`);
       let response;
       if (name === "blocks") {
-        response = await fetch(`http://${env_HOSTNAME}:8092/api/blocks`, {method: "GET"}); 
+        response = await fetch(`http://${layout_IP}:8092/api/blocks`, {method: "GET"}); 
       } else if (name === "theme"){
-        response = await fetch(`http://${env_HOSTNAME}:8082/api/themes/current`, {method: "GET"});
+        response = await fetch(`http://${theme_IP}:8082/api/themes/current`, {method: "GET"});
       } else {
-        response = await fetch(`http://${env_HOSTNAME}:8092/api/units/${name}`, {method: "GET"}); 
+        response = await fetch(`http://${layout_IP}:8092/api/units/${name}`, {method: "GET"}); 
       }
       if (!response.ok) {
         console.log("Bad Query: ", name);
@@ -78,7 +82,7 @@ function App() {
 
   async function getImage(img_name: string) {
     try {
-        const response = await fetch(`http://${env_HOSTNAME}:8082/api/s3/${img_name}`, 
+        const response = await fetch(`http://${theme_IP}:8082/api/s3/${img_name}`, 
                                 {method: 'GET'});
         // const fileName = response.headers.get('file_name');
         const blob = await response.blob();
@@ -122,6 +126,7 @@ function App() {
     //   console.log("Got icon: ", icon);
     // });
     // console.log("use effected :D :D :D");
+    console.log(theme_IP);
     fetchData("blocks").then(async (data) => {
       // console.log("blocks: ", data);`
       setBlocks(data);
@@ -182,7 +187,7 @@ function App() {
       const jsonBody = { "key": name, "value": state }; 
       const header = {'Content-Type' : 'application/json'};
       console.log(jsonBody); 
-      const response = await fetch(`http://${env_HOSTNAME}:8092/api/units/${name}`, 
+      const response = await fetch(`http://${layout_IP}:8092/api/units/${name}`, 
                                    {method: 'PUT', headers: header, body: JSON.stringify(jsonBody)});
       if (!response.ok) {
         console.log("Bad Query: ", name);
@@ -236,10 +241,10 @@ function App() {
       const header = {'Content-Type' : 'application/json'};
       let response;
       if (type === "POST") {
-        response = await fetch(`http://${env_HOSTNAME}:8092/api/blocks`, 
+        response = await fetch(`http://${layout_IP}:8092/api/blocks`, 
                               {method: 'POST', headers: header, body: JSON.stringify(block)});
       } else {
-        response = await fetch(`http://${env_HOSTNAME}:8092/api/blocks/${i}`, 
+        response = await fetch(`http://${layout_IP}:8092/api/blocks/${i}`, 
                               {method: type, headers: header, body: JSON.stringify(block)});
       }
       if (!response.ok) {
@@ -255,7 +260,7 @@ function App() {
   async function updateTheme(newTheme: themeType, i: themeNames) {
     try {
       const header = {'Content-Type' : 'application/json'};
-      const response = await fetch(`http://${env_HOSTNAME}:8082/api/themes/${i}`, 
+      const response = await fetch(`http://${theme_IP}:8082/api/themes/${i}`, 
                               {method: 'PUT', headers: header, body: JSON.stringify(newTheme)});
       if (!response.ok) {
         throw new Error();
@@ -323,12 +328,12 @@ function App() {
           <HeaderPopup name="Add Widget" display={disWid} updateDisplay={setDisWid} colors={colors}/>
         )}
         <ColorPalette display={dispColPal} colors={colors} updateColors={setColors}/>
-        <ChangeTheme display={disTheme} colors={colors} theme={theme} updateTheme={chooseTheme} env_HOSTNAME={env_HOSTNAME} 
+        <ChangeTheme display={disTheme} colors={colors} theme={theme} updateTheme={chooseTheme}
                      bkgImgs={bkgImgs} updateBkgImgs={setBkgImgs} getImage={(img_name: string) => getImage(img_name)}/>
         <SaveTheme display={disSave} colors={colors} theme={theme} updateTheme={setTheme} saveGrid={saveGrid} 
-                   env_HOSTNAME={env_HOSTNAME} bkgImgs={bkgImgs} getImage={(img_name: string) => getImage(img_name)} 
+                   bkgImgs={bkgImgs} getImage={(img_name: string) => getImage(img_name)} 
                    updateBkgImgs={(newBkgImgs: backImgType[]) => setBkgImgs(newBkgImgs)}/>
-        <ChangeBackground display={disBack} colors={colors} env_HOSTNAME={env_HOSTNAME} backImg={backImage} 
+        <ChangeBackground display={disBack} colors={colors} backImg={backImage} 
                           bkgImgs={bkgImgs} updateBackImg={updateBackground} 
                           updateBkgImgs={(newBkgImgs: backImgType[]) => setBkgImgs(newBkgImgs)}
                           getImage={(img_name: string) => getImage(img_name)}/>
@@ -352,8 +357,7 @@ function App() {
                                          onUpdateBlocks2={(newBlocks: blockType[]) => setBlocks(newBlocks)}
                                          onUpdateDelBlocks={(del: blockType[]) => setDelBlocks(del)}
                                          onUpdateShowEdit={(newEdit: blockModalType[]) => setEdit(newEdit)}
-                                         colors={colors}
-                                         env_HOSTNAME={env_HOSTNAME}/>}
+                                         colors={colors}/>}
         />
       </Routes>
     </div>

@@ -13,6 +13,8 @@ RUN npm install
 # Copy other files to my current directory
 COPY . .
 
+# Compile typescript files in src directory
+RUN npm run tsc
 
 # Open the port for the express server
 EXPOSE 3000

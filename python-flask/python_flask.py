@@ -20,8 +20,8 @@ def s3_connect():
         s3_client = boto3.client(
             service_name='s3',
             region_name=os.getenv('AWS_REGION'),
-            aws_access_key_id=os.getenv('AWS_ACCESS_KEY'),
-            aws_secret_access_key=os.getenv('AWS_SECRET_KEY')
+            aws_access_key_id=os.getenv('AWS_ACCESS_KEY_FLASK'),
+            aws_secret_access_key=os.getenv('AWS_SECRET_KEY_FLASK')
         )
         print("Successfully connected to s3")
         return s3_client
@@ -32,7 +32,7 @@ def s3_connect():
 
 def mongo_connect():
     try: 
-        mongo_client = MongoClient(f"mongodb+srv://{os.getenv('MONGODB_USER')}:{os.getenv('MONGODB_PASSWORD')}@whatisacluster.n8fqxho.mongodb.net/{os.getenv('MONGODB_DBNAME')}?retryWrites=true&w=majority&appName=WhatIsACluster")
+        mongo_client = MongoClient(f"mongodb+srv://{os.getenv('MONGODB_USER')}:{os.getenv('MONGODB_PASSWORD')}@whatisacluster.n8fqxho.mongodb.net/{os.getenv('MONGODB_DBNAME_MEDIA')}?retryWrites=true&w=majority&appName=WhatIsACluster")
         print("Successfully connected MongoDB")
         return mongo_client
     except pymongo.errors.ConnectionFailure as error: 
@@ -44,12 +44,17 @@ s3_client = s3_connect()
 mongo_client = mongo_connect()
 
 def s3_upload(FILE_NAME):
-    LOCAL_FILE = './Videos/' + FILE_NAME
+    # LOCAL_FILE = 'Videos/' + FILE_NAME
+    LOCAL_FILE = os.path.join('Videos', FILE_NAME)
     NAME_FOR_S3 = 'videos/' + FILE_NAME
 
     if (s3_client):
         try: 
-            s3_client.upload_file(LOCAL_FILE, os.getenv('AWS_S3_BUCKET_NAME'), NAME_FOR_S3)
+            # if not os.path.exists(LOCAL_FILE):
+            #     print(f"File does not exist: {LOCAL_FILE}")
+            #     print(f"Current Directory: {os.getcwd()}")
+            #     return
+            s3_client.upload_file(LOCAL_FILE, os.getenv('AWS_S3_BUCKET_NAME_VIDEOS'), NAME_FOR_S3)
             print("Successfully uploaded file")
             mongo_upload(FILE_NAME, NAME_FOR_S3)
         except botocore.exceptions.ClientError as error: 
@@ -60,7 +65,7 @@ def s3_upload(FILE_NAME):
 
 def mongo_upload(video_title, video_path): 
     if (mongo_client):
-        database = mongo_client[os.getenv('MONGODB_DBNAME')]
+        database = mongo_client[os.getenv('MONGODB_DBNAME_MEDIA')]
         collection = database['videos']
         video = { "title": video_title, 
                 "video_path": video_path

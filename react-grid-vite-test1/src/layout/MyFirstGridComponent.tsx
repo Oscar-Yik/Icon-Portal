@@ -13,10 +13,10 @@ import { themeType, blockType, data_grid_type, blockModalType, colorType,
 
 type MyFirstGridProps = { blocks2: blockType[], delBlocks: blockType[], showEdit: blockModalType[], 
     onUpdateBlocks2: updateBlocks2Fn, onUpdateDelBlocks: updateDelBlocksFn, 
-    onUpdateShowEdit: updateEditFn, colors: colorType, env_HOSTNAME: string }
+    onUpdateShowEdit: updateEditFn, colors: colorType }
 
 export default function MyFirstGridComponent({blocks2, delBlocks, showEdit, onUpdateBlocks2, 
-                                              onUpdateDelBlocks, onUpdateShowEdit, colors, env_HOSTNAME }: MyFirstGridProps) {
+                                              onUpdateDelBlocks, onUpdateShowEdit, colors }: MyFirstGridProps) {
 
     const { defaultRowHeight, defaultCols, defaultMaxRows, windowHeight, windowWidth } = getConstants();
 
@@ -99,7 +99,7 @@ export default function MyFirstGridComponent({blocks2, delBlocks, showEdit, onUp
                     {generateNewDOM()}
                 </GridLayout>
                 <EditBox showEdit={showEdit} updateEdit={onUpdateShowEdit} blocks2={blocks2} 
-                         updateBlocks2={onUpdateBlocks2} colors={colors} env_HOSTNAME={env_HOSTNAME}/>
+                         updateBlocks2={onUpdateBlocks2} colors={colors} />
             </GridOverlay>
         </GridContainer>
     );
