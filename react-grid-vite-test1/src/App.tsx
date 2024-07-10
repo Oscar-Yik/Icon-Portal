@@ -26,7 +26,7 @@ function App() {
   const [delBlocks, setDelBlocks] = useState<blockType[]>([]);
   const [addBlocks, setAddBlocks] = useState<blockType[]>([]);
 
-  const [backImage, setBackImg] = useState<backImgType>({ id: "current", name: "TRASH", imgPath: "https://images3.alphacoders.com/135/1350069.jpeg" });
+  const [backgroundImage, setBackgroundImg] = useState<backImgType>({ id: "current", name: "TRASH", imgPath: "https://images3.alphacoders.com/135/1350069.jpeg" });
   const [edit, setEdit] = useState<blockModalType[]>([]);
   const [nameID, setNameID] = useState(0);
   const [colors, setColors] = useState<colorType>({ block: "", header: "", headerButton: "", headerFont: "", 
@@ -145,7 +145,7 @@ function App() {
       // console.log("theme changed: ", data);
       setTheme(data);
       saveColors(data);
-      setBackImg(data.backImg);
+      setBackgroundImg(data.backImg);
     });
 
     fetchThemes()
@@ -159,7 +159,7 @@ function App() {
     getImage(backImg)
       .then(obj_url => {
         if (obj_url) {
-          setBackImg({ id: "current", name: backImg, imgPath: obj_url });  
+          setBackgroundImg({ id: "current", name: backImg, imgPath: obj_url });  
         }
       })
       .catch(err => {
@@ -169,8 +169,8 @@ function App() {
   }, [theme])
 
   useEffect(() => {
-    console.log("Background Image Changed: ", backImage)
-  }, [backImage])
+    console.log("Background Image Changed: ", backgroundImage)
+  }, [backgroundImage])
 
   function updateBackground(trash: any, newImg: string) {
     //setBackImg(newImg);
@@ -224,15 +224,15 @@ function App() {
     
     updateThings("nameID", nameID.toString());
 
-    const backgroundImage = {backImg: backImage.name};
+    const backImage = {backImg: backgroundImage.name};
     if (theme_name !== "current") {
       const nameObj_A = {name: theme_name};
-      const newTheme_A = {...nameObj_A, ...backgroundImage, ...colors}; 
+      const newTheme_A = {...nameObj_A, ...backImage, ...colors}; 
       updateTheme(newTheme_A, theme_name); 
     }
     const curr_name : themeNames = "current";
     const nameObj_C = {name: curr_name};
-    const newTheme_C = {...nameObj_C, ...backgroundImage, ...colors}; 
+    const newTheme_C = {...nameObj_C, ...backImage, ...colors}; 
     updateTheme(newTheme_C, "current"); 
   }
 
@@ -281,7 +281,7 @@ function App() {
 
   return (
     <div style={{
-        backgroundImage: `url(${backImage.imgPath})`,
+        backgroundImage: `url(${backgroundImage.imgPath})`,
         backgroundRepeat: 'no-repeat',
         backgroundSize: 'cover', 
         backgroundPosition: 'center'
@@ -333,7 +333,7 @@ function App() {
         <SaveTheme display={disSave} colors={colors} theme={theme} updateTheme={setTheme} saveGrid={saveGrid} 
                    bkgImgs={bkgImgs} getImage={(img_name: string) => getImage(img_name)} 
                    updateBkgImgs={(newBkgImgs: backImgType[]) => setBkgImgs(newBkgImgs)}/>
-        <ChangeBackground display={disBack} colors={colors} backImg={backImage} 
+        <ChangeBackground display={disBack} colors={colors} backImg={backgroundImage} 
                           bkgImgs={bkgImgs} updateBackImg={updateBackground} 
                           updateBkgImgs={(newBkgImgs: backImgType[]) => setBkgImgs(newBkgImgs)}
                           getImage={(img_name: string) => getImage(img_name)}/>
