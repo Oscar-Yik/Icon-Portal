@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import "../utils/Background.css";
+import getConstants from '../utils/Constants';
 
 import { colorType, backImgType, themeType, updateBkgImgs, getFunction } from './../grid-types';
 
@@ -12,8 +13,11 @@ type ChangeThemeProps = {
 export default function ChangeTheme({ colors, display, theme, updateTheme, bkgImgs, updateBkgImgs, getImage } : ChangeThemeProps) {
 
     const [allThemes, setAllThemes] = useState<themeType[]>([]);
+
+    const { serverIP, protocol } = getConstants();
+
     const theme_IP = (import.meta.env.VITE_THEMES_IP) ? 
-        (import.meta.env.VITE_THEMES_IP) : ("grid-themes-service");
+        (import.meta.env.VITE_THEMES_IP) : (`${serverIP}/grid-themes`);
     
     useEffect(() => {
         if (display) {
@@ -24,7 +28,7 @@ export default function ChangeTheme({ colors, display, theme, updateTheme, bkgIm
 
     async function fetchThemes() {
         try {
-            const response = await fetch(`http://${theme_IP}:8082/api/themes`, {method: "GET"});
+            const response = await fetch(`${protocol}://${theme_IP}/api/themes`, {method: "GET"});
             if (!response.ok) {
               console.log("Bad Query: fetchThemes()");
             }

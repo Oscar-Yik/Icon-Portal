@@ -7,23 +7,29 @@ WORKDIR /app
 # Copy the package.json file to my current directory to install the necessary dependence  
 COPY package.json .
 
-# download curl 
-RUN apk --no-cache add curl
-
 # Install the dependence
 RUN npm install
 
 # Copy other files to my current directory
 COPY . .
 
-# Build and optimize static file
-RUN npm run build
+# Clear npm cache and build the application
+RUN npm cache clean --force && npm run build
 
 # Stage-2
 FROM nginx:1.25.2-alpine-slim
 
+# removing default nginx config file
+RUN rm /etc/nginx/conf.d/default.conf
+
+# copying our nginx config
+COPY /default.conf /etc/nginx/conf.d/
+
 # Copy the static file to my Nginx folder to serve static contain
 COPY --from=builder /app/dist /usr/share/nginx/html
+
+# download curl 
+RUN apk --no-cache add curl
 
 # Open the port to react
 EXPOSE 80

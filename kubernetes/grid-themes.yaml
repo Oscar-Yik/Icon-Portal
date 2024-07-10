@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grid-themes-deployment
+  labels:
+    app: grid-themes
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grid-themes
+  template:
+    metadata:
+      labels:
+        app: grid-themes
+    spec:
+      containers:
+      - name: grid-themes-container
+        image: oscaryik/grid-thing-grid-themes:2.4
+        ports:
+        - containerPort: 8082
+        env: 
+        - name: MONGODB_PASSWORD
+          valueFrom:
+            secretKeyRef: 
+              name: grid-secret 
+              key: MONGODB_PASSWORD 
+        - name: MONGODB_USER
+          valueFrom:
+            secretKeyRef: 
+              name: grid-secret 
+              key: MONGODB_USER 
+        - name: DEV_MONGODB_PASSWORD
+          valueFrom:
+            secretKeyRef: 
+              name: grid-secret 
+              key: DEV_MONGODB_PASSWORD 
+        - name: MONGODB_DBNAME_THEMES
+          valueFrom:
+            secretKeyRef: 
+              name: grid-secret 
+              key: MONGODB_DBNAME_THEMES 
+        - name: AWS_S3_BUCKET_NAME_IMAGES
+          valueFrom:
+            secretKeyRef: 
+              name: grid-secret 
+              key: AWS_S3_BUCKET_NAME_IMAGES 
+        - name: AWS_REGION
+          valueFrom:
+            secretKeyRef: 
+              name: grid-secret 
+              key: AWS_REGION 
+        - name: AWS_ACCESS_KEY_NODE
+          valueFrom:
+            secretKeyRef: 
+              name: grid-secret 
+              key: AWS_ACCESS_KEY_NODE 
+        - name: AWS_SECRET_KEY_NODE
+          valueFrom:
+            secretKeyRef: 
+              name: grid-secret 
+              key: AWS_SECRET_KEY_NODE 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grid-themes-service
+spec:
+  selector:
+    app: grid-themes
+  ports:
+    - protocol: TCP
+      port: 8082
+      targetPort: 8082

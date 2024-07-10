@@ -11,6 +11,7 @@ import HeaderPopup from './navigation/HeaderPopup';
 import ChangeBackground from './navigation/ChangeBackground';
 import AddWidget from './navigation/AddWidget';
 import getErrorMessage from './utils/Errors';
+import getConstants from './utils/Constants';
 import { themeType, blockType, data_grid_type, blockModalType, colorType, 
          unitType, apiKeys, themeNames, httpRequestType, backImgType } from './grid-types';
 
@@ -37,7 +38,7 @@ function App() {
   const [disBack, setDisBack] = useState(false);
   const [disWid, setDisWid] = useState(false);
   const [theme, setTheme] = useState<themeType>({ name: "current", block: "", header: "", headerButton: "", headerFont: "", 
-                                                  grid: "", editBox: "", editBoxFont: "", backImg: "" });
+                                                  grid: "", editBox: "", editBoxFont: "", backImg: "Sample_Background_5.jpg" });
   const [bkgImgs, setBkgImgs] = useState<backImgType[]>([
     { id: "1", name: "Sample_Background_1", imgPath: "https://wallpapercave.com/wp/wp13129045.jpg"}, 
     { id: "2", name: "Sample_Background_2", imgPath: "https://wallpapercave.com/wp/wp13129045.jpg" }, 
@@ -47,23 +48,25 @@ function App() {
 
   const navigate = useNavigate();
   const location = useLocation();
+  
+  const { serverIP, protocol } = getConstants();
 
   const layout_IP = (import.meta.env.VITE_LAYOUT_IP) ? 
-    (import.meta.env.VITE_LAYOUT_IP) : ("grid-layout-service");
+    (import.meta.env.VITE_LAYOUT_IP) : (`${serverIP}/grid-layout`);
 
   const theme_IP = (import.meta.env.VITE_THEMES_IP) ? 
-    (import.meta.env.VITE_THEMES_IP) : ("grid-themes-service");
+    (import.meta.env.VITE_THEMES_IP) : (`${serverIP}/grid-themes`);
 
   async function fetchData(name: apiKeys) {
     try {
       // console.log("call: ", `http://${env_HOSTNAME}:8092/api/blocks`);
       let response;
       if (name === "blocks") {
-        response = await fetch(`http://${layout_IP}:8092/api/blocks`, {method: "GET"}); 
+        response = await fetch(`${protocol}://${layout_IP}/api/blocks`, {method: "GET"}); 
       } else if (name === "theme"){
-        response = await fetch(`http://${theme_IP}:8082/api/themes/current`, {method: "GET"});
+        response = await fetch(`${protocol}://${theme_IP}/api/themes/current`, {method: "GET"});
       } else {
-        response = await fetch(`http://${layout_IP}:8092/api/units/${name}`, {method: "GET"}); 
+        response = await fetch(`${protocol}://${layout_IP}/api/units/${name}`, {method: "GET"}); 
       }
       if (!response.ok) {
         console.log("Bad Query: ", name);
@@ -82,7 +85,7 @@ function App() {
 
   async function getImage(img_name: string) {
     try {
-        const response = await fetch(`http://${theme_IP}:8082/api/s3/${img_name}`, 
+        const response = await fetch(`${protocol}://${theme_IP}/api/s3/${img_name}`, 
                                 {method: 'GET'});
         // const fileName = response.headers.get('file_name');
         const blob = await response.blob();
@@ -187,7 +190,7 @@ function App() {
       const jsonBody = { "key": name, "value": state }; 
       const header = {'Content-Type' : 'application/json'};
       console.log(jsonBody); 
-      const response = await fetch(`http://${layout_IP}:8092/api/units/${name}`, 
+      const response = await fetch(`${protocol}://${layout_IP}/api/units/${name}`, 
                                    {method: 'PUT', headers: header, body: JSON.stringify(jsonBody)});
       if (!response.ok) {
         console.log("Bad Query: ", name);
@@ -241,10 +244,10 @@ function App() {
       const header = {'Content-Type' : 'application/json'};
       let response;
       if (type === "POST") {
-        response = await fetch(`http://${layout_IP}:8092/api/blocks`, 
+        response = await fetch(`${protocol}://${layout_IP}/api/blocks`, 
                               {method: 'POST', headers: header, body: JSON.stringify(block)});
       } else {
-        response = await fetch(`http://${layout_IP}:8092/api/blocks/${i}`, 
+        response = await fetch(`${protocol}://${layout_IP}/api/blocks/${i}`, 
                               {method: type, headers: header, body: JSON.stringify(block)});
       }
       if (!response.ok) {
@@ -260,7 +263,7 @@ function App() {
   async function updateTheme(newTheme: themeType, i: themeNames) {
     try {
       const header = {'Content-Type' : 'application/json'};
-      const response = await fetch(`http://${theme_IP}:8082/api/themes/${i}`, 
+      const response = await fetch(`${protocol}://${theme_IP}/api/themes/${i}`, 
                               {method: 'PUT', headers: header, body: JSON.stringify(newTheme)});
       if (!response.ok) {
         throw new Error();

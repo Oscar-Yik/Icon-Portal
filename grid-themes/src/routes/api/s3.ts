@@ -215,7 +215,7 @@ async function makePostRequest(file_name: string, is_url: boolean) : Promise<str
         const body = JSON.stringify({ "img_name": file_name, "is_url": is_url });
 
         const options = {
-            hostname: (process.env.VITE_THEMES_IP) ? (process.env.VITE_THEMES_IP) : ("grid-themes-service"), 
+            hostname: (process.env.VITE_THEMES_IP) ? (process.env.VITE_THEMES_IP) : ("icon-portal.click/grid-themes"), 
             port: 8082, 
             path: "/api/s3",
             method: "POST", 

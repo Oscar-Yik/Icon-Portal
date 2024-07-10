@@ -74,10 +74,10 @@ services:
     image: mongo:latest
     container_name: mongodb_server
 
-    env_file: ./.env
+    env_file: .env
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=$MONGODB_USER
-      - MONGO_INITDB_ROOT_PASSWORD=$MONGODB_PASSWORD
+      - MONGO_INITDB_ROOT_USERNAME=${MONGODB_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${DEV_MONGODB_PASSWORD}
 
     ports:
       - "27017:27017"
