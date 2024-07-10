@@ -1,3 +1,5 @@
 #Extra stuff 
 .venv
 .env
+data
+grid-secret.yaml

@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: icon-proxy-server-deployment
+  labels:
+    app: icon-proxy-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: icon-proxy-server
+  template:
+    metadata:
+      labels:
+        app: icon-proxy-server
+    spec:
+      containers:
+      - name: icon-proxy-server-container
+        image: oscaryik/grid-thing-icon-proxy:2.0
+        ports:
+        - containerPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: icon-proxy-server-service
+spec:
+  selector:
+    app: icon-proxy-server
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000

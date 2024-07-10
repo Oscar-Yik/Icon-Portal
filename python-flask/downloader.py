@@ -1,4 +1,4 @@
-import pytube 
+import pytube
 from pytube import YouTube
 from concurrent.futures import ThreadPoolExecutor
 import time 
@@ -48,15 +48,30 @@ def download_playlist (playlist_name):
         playlist = download_video_threads(playlist_name)
     return {"status": True, "title": playlist}
 
+# def save_video_to_db (title, mysql): 
+#     with open('Videos/' + title, 'rb') as file:
+#         binary_data = file.read()
+#     query = "INSERT INTO videos (id, video_data) VALUES (%s, %s)"
+#     cursor = mysql.connection.cursor()
+#     cursor.execute(query, (title, binary_data))
+#     mysql.connection.commit()
+#     cursor.close()
+#     print("saved video to db")
+
 def download_single_video (url):
+    # try: 
     yt = YouTube(url)
+    # except AttributeError: 
+    #     return {"status": False, "title": "couldn't scrape video" + yt.streams[0].title}
     try: 
         yt.streams.first().download('./Videos')
     except pytube.exceptions.VideoUnavailable:
         return {"status": False, "title": yt.streams[0].title}
     else: 
+        # save_video_to_db(yt.streams[0].title + ".mp4", mysql)
         return {"status": True, "title": [yt.streams[0].title + ".mp4"]}
+    # print(url)
 
 
 #download_playlist('Memes')
-#download_playlist('Piano')
+# download_playlist('Piano')

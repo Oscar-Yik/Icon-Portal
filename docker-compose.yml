@@ -5,21 +5,39 @@
 
 # Services
 services:
-  # Server service
-  server:
+  # Grid-Layout service
+  grid-layout:
     build:
-      context: ./grid-backend
+      context: ./grid-layout
       dockerfile: Dockerfile
-    container_name: backend
+    container_name: backend-grid-layout
+    ports:
+      - "8092:8092"
+    env_file: ".env"
+    depends_on:
+      - mongodb
+
+  # Grid-Themes service
+  grid-themes:
+    build:
+      context: ./grid-themes
+      dockerfile: Dockerfile
+    container_name: backend-grid-themes
     ports:
       - "8082:8082"
-    env_file: ./.env
-    environment:
-      # - DB_HOST=mongodb_server
-      - DB_USER=$MONGODB_USER
-      - DB_PASSWORD=$MONGODB_PASSWORD
-      # - DB_NAME=$MONGODB_DATABASE
-      # - DB_PORT=$MONGODB_DOCKER_PORT
+    env_file: ".env"
+    depends_on:
+      - mongodb
+  
+  # Icon Proxy service
+  icon-proxy:
+    build:
+      context: ./icon-proxy-server
+      dockerfile: Dockerfile
+    container_name: backend-icon-proxy
+    ports:
+      - "3000:3000"
+    env_file: ".env"
     depends_on:
       - mongodb
 
@@ -32,18 +50,34 @@ services:
     container_name: frontend
     ports:
       - "80:80"
+    env_file: ".env"
     depends_on:
-      - server
+      - grid-layout
+      - grid-themes
+      - icon-proxy
+
+  # Widget service
+  widget:
+    build:
+      context: ./python-flask
+      dockerfile: Dockerfile
+      
+    container_name: python-flask
+    ports:
+      - "3001:3001"
+    env_file: ".env"
+    depends_on:
+      - mongodb
 
   # Database service
   mongodb:
     image: mongo:latest
     container_name: mongodb_server
 
-    env_file: ./.env
+    env_file: .env
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=$MONGODB_USER
-      - MONGO_INITDB_ROOT_PASSWORD=$MONGODB_PASSWORD
+      - MONGO_INITDB_ROOT_USERNAME=${MONGODB_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${DEV_MONGODB_PASSWORD}
 
     ports:
       - "27017:27017"

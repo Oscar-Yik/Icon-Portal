@@ -1,0 +1,17 @@
+declare module "StaticGridComponent";
+declare module "react-grid-layout";
+declare module "Constants";
+declare module "MyFirstGridComponent";
+declare module "GridContainer";
+declare module "GridOverlay";
+declare module "ChangeBackground";
+declare module "ChangeTheme";
+declare module "SaveTheme";
+declare module "Block";
+declare module "EditBox";
+declare module "VideoDownloader";
+declare module "AddBlock";
+declare module "AddWidget";
+declare module "ColorPalette";
+declare module "HeaderPopup";
+declare module "EditableText";
