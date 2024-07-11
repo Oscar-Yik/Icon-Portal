@@ -13,7 +13,7 @@ type EditBoxProps = {
 
 export default function EditBox({showEdit, updateEdit, blocks2, updateBlocks2, colors } : EditBoxProps) {
 
-    const { defaultRowHeight, margins, colWidth, serverIP } = getConstants();
+    const { defaultRowHeight, margins, colWidth, serverIP, protocol } = getConstants();
     const icon_IP = (import.meta.env.VITE_ICON_IP) ? 
         (import.meta.env.VITE_ICON_IP) : (`${serverIP}/icon-proxy`);
 
@@ -21,7 +21,7 @@ export default function EditBox({showEdit, updateEdit, blocks2, updateBlocks2, c
         try {
             const img_url = url.replace(/\//g, '%2F');
             console.log(img_url);
-            const response = await fetch(`http://${icon_IP}/icon_url?i=${img_url}`);
+            const response = await fetch(`${protocol}://${icon_IP}/icon_url?i=${img_url}`);
             if (!response.ok) {
               console.log("Bad Query: fetchIcons()");
             }

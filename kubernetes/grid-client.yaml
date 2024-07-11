@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: grid-client-container
-        image: oscaryik/grid-thing-client:2.7.1.D
+        image: oscaryik/grid-thing-client:2.8.1.D
         ports:
         - containerPort: 80
 ---
@@ -24,8 +24,10 @@ apiVersion: v1
 kind: Service
 metadata:
   name: grid-client-service
+  annotations:
+    cloud.google.com/neg: '{"ingress": true}'
 spec:
-  type: LoadBalancer
+  type: ClusterIP
   selector:
     app: grid-client
   ports:

@@ -29,7 +29,7 @@ export default function ChangeBackground({ colors, display, backImg, bkgImgs, up
     const [textImage, setTextimage] = useState<string>("Double Click to Enter Image URL");
     const [textImageIcon, setTextimageIcon] = useState<IconNumber>(1);
 
-    const { serverIP } = getConstants();
+    const { serverIP, protocol } = getConstants();
 
     const theme_IP = (import.meta.env.VITE_THEMES_IP) ? 
         (import.meta.env.VITE_THEMES_IP) : (`${serverIP}/grid-themes`);
@@ -97,7 +97,7 @@ export default function ChangeBackground({ colors, display, backImg, bkgImgs, up
 
     async function getNextImgs() {
         try {
-            const response = await fetch(`http://${theme_IP}/api/s3/metadata/img_count`, { method: 'GET' }); 
+            const response = await fetch(`${protocol}://${theme_IP}/api/s3/metadata/img_count`, { method: 'GET' }); 
             if (!response.ok) {
                 throw new Error("Couldn't get img_count");
             }
@@ -170,7 +170,7 @@ export default function ChangeBackground({ colors, display, backImg, bkgImgs, up
             formData.append('file', file);
 
             // send a new request to a new endpoint with the file 
-            const response = await fetch(`http://${theme_IP}/api/s3/sendImage`, { 
+            const response = await fetch(`${protocol}://${theme_IP}/api/s3/sendImage`, { 
                 method: 'POST', 
                 body: formData
             }); 
@@ -189,7 +189,7 @@ export default function ChangeBackground({ colors, display, backImg, bkgImgs, up
     async function uploadTextImage() {
         try {
             const payload = { url: textImage };
-            const response = await fetch(`http://${theme_IP}/api/s3/sendImageURL`, { 
+            const response = await fetch(`${protocol}://${theme_IP}/api/s3/sendImageURL`, { 
                 headers: {
                     "Content-Type": "application/json"
                 },

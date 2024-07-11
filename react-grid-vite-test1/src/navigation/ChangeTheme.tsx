@@ -14,7 +14,7 @@ export default function ChangeTheme({ colors, display, theme, updateTheme, bkgIm
 
     const [allThemes, setAllThemes] = useState<themeType[]>([]);
 
-    const { serverIP } = getConstants();
+    const { serverIP, protocol } = getConstants();
 
     const theme_IP = (import.meta.env.VITE_THEMES_IP) ? 
         (import.meta.env.VITE_THEMES_IP) : (`${serverIP}/grid-themes`);
@@ -28,7 +28,7 @@ export default function ChangeTheme({ colors, display, theme, updateTheme, bkgIm
 
     async function fetchThemes() {
         try {
-            const response = await fetch(`http://${theme_IP}/api/themes`, {method: "GET"});
+            const response = await fetch(`${protocol}://${theme_IP}/api/themes`, {method: "GET"});
             if (!response.ok) {
               console.log("Bad Query: fetchThemes()");
             }

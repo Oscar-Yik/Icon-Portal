@@ -4,8 +4,10 @@ type constantType = { defaultRowHeight: number,
                       windowWidth: number, 
                       windowHeight: number, 
                       defaultMaxRows: number, 
-                      colWidth: number
-                      serverIP: string }
+                      colWidth: number,
+                      serverIP: string,
+                      prod: boolean,
+                      protocol: string }
 
 type getConstantFn = () => constantType
 
@@ -17,7 +19,9 @@ const getConstants = () => {
     const windowHeight = window.innerHeight;
     const defaultMaxRows = Math.floor(windowHeight / (defaultRowHeight + margins)) - 1;
     const colWidth = Math.ceil((windowWidth - (margins*(defaultCols + 1)))/defaultCols);
-    const serverIP = "35.193.60.156";
+    const serverIP = "icon-portal.click";
+    const prod = true;
+    const protocol = (prod) ? "https" : "http";
   
     return {
       defaultRowHeight,
@@ -28,6 +32,8 @@ const getConstants = () => {
       defaultMaxRows,
       colWidth,
       serverIP,
+      prod,
+      protocol, 
     };
   };
     
