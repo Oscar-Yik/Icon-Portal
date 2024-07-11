@@ -1,7 +1,7 @@
 ### README 
 
 ### Structural Diagram 
-![Structural Diagram](https://github.com/Oscar-Yik/Grid-Thing/blob/main/assets/Grid-Thing_Structural_Diagram_v2.svg)
+![Structural Diagram](https://github.com/Oscar-Yik/Grid-Thing/blob/main/assets/Grid-Thing_Structural_Diagram_v2.png)
 
 ## Access the Homepage!!!
 - https://icon-portal.click
