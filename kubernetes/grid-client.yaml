@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: grid-client-container
-        image: oscaryik/grid-thing-client:2.8.1.D
+        image: us-central1-docker.pkg.dev/GOOGLE_PROJECT/icon-portal-images/grid-thing-client:latest
         ports:
         - containerPort: 80
 ---
