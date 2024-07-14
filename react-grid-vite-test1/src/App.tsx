@@ -23,22 +23,27 @@ import '@fortawesome/fontawesome-free/css/all.css';
 
 function App() {
 
-  const [blocks2, setBlocks] = useState<blockType[]>([]);
+  const [blocks2, setBlocks] = useState<blockType[]>([{
+    data_grid: { i: "Block 1", x: 6, y: 6, w: 2, h: 2, isBounded: true, isResizable: false, },
+    link: "https://chat.openai.com",
+    img_url: "https://chat.openai.com/favicon.ico" }]);
   const [delBlocks, setDelBlocks] = useState<blockType[]>([]);
   const [addBlocks, setAddBlocks] = useState<blockType[]>([]);
 
   const [backgroundImage, setBackgroundImg] = useState<backImgType>({ id: "current", name: "TRASH", imgPath: "https://images3.alphacoders.com/135/1350069.jpeg" });
-  const [edit, setEdit] = useState<blockModalType[]>([]);
+  const [edit, setEdit] = useState<blockModalType[]>([{ i: "Block 1", status: false}]);
   const [nameID, setNameID] = useState(0);
-  const [colors, setColors] = useState<colorType>({ block: "", header: "", headerButton: "", headerFont: "", 
-                                                    grid: "", editBox: "", editBoxFont: "" });
+  const [colors, setColors] = useState<colorType>({ block: "#6D78BF", header: "#8a51b8", headerButton: "#E0B0FF", 
+                                                    headerFont: "#0d5e5e", grid: "#D3D3D3", 
+                                                    editBox: "#C19FB3", editBoxFont: "#2F4F4F" });
   const [dispColPal, setDisColPal] = useState(false);
   const [disTheme, setDisTheme] = useState(false);
   const [disSave, setDisSave] = useState(false);
   const [disBack, setDisBack] = useState(false);
   const [disWid, setDisWid] = useState(false);
-  const [theme, setTheme] = useState<themeType>({ name: "current", block: "", header: "", headerButton: "", headerFont: "", 
-                                                  grid: "", editBox: "", editBoxFont: "", backImg: "Sample_Background_5.jpg" });
+  const [theme, setTheme] = useState<themeType>({ name: "current", block: "#6D78BF", header: "#8a51b8", headerButton: "#E0B0FF", 
+                                                  headerFont: "#0d5e5e", grid: "#D3D3D3", editBox: "#C19FB3", 
+                                                  editBoxFont: "#2F4F4F", backImg: "Sample_Background_5.jpg" });
   const [bkgImgs, setBkgImgs] = useState<backImgType[]>([
     { id: "1", name: "Sample_Background_1", imgPath: "https://wallpapercave.com/wp/wp13129045.jpg"}, 
     { id: "2", name: "Sample_Background_2", imgPath: "https://wallpapercave.com/wp/wp13129045.jpg" }, 
@@ -69,12 +74,12 @@ function App() {
         response = await fetch(`${protocol}://${layout_IP}/api/units/${name}`, {method: "GET"}); 
       }
       if (!response.ok) {
-        console.log("Bad Query: ", name);
+        console.log("Bad Query:", name);
       }
       const data = await response.json();
       return data;
     } catch (e) {
-      console.log("Error: couldn't get ", name);
+      throw new Error(`Error: couldn't get ${name}`);
     }
   }
 
@@ -139,6 +144,8 @@ function App() {
           newShowEdit.push({i: data[i].data_grid.i, status: false});
       }
       setEdit(newShowEdit);
+    }).catch((e) => {
+      console.log(getErrorMessage(e));
     });
 
     fetchData("nameID").then((data) => {
