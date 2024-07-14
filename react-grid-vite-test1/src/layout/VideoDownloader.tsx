@@ -47,7 +47,7 @@ export default function VideoDownloader ({block, removeBlock, colors} : VideoDow
             element.setAttribute('download', video)
             // document.body.appendChild(objectURL);
             element.click();
-            // element.parentNode.removeChild(objectURL);
+            // element.parentNode.removeChild(objectURL); 
         } catch (error) {
             console.log("Error downloading video");
         }
