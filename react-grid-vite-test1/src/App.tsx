@@ -12,7 +12,7 @@ import ChangeBackground from './navigation/ChangeBackground';
 import AddWidget from './navigation/AddWidget';
 import getErrorMessage from './utils/Errors';
 import getConstants from './utils/Constants';
-import { themeType, blockType, data_grid_type, blockModalType, colorType, 
+import { themeType, blockType, blockModalType, colorType, 
          unitType, apiKeys, themeNames, httpRequestType, backImgType } from './grid-types';
 
 import 'bootstrap/dist/css/bootstrap.css';
@@ -79,6 +79,7 @@ function App() {
   }
 
   function saveColors(db_theme: themeType) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { name, backImg, ...color_copy } = db_theme;
     setColors(color_copy);
   }
@@ -107,7 +108,7 @@ function App() {
         for (let i = 0; i < 5; i++) {
             const obj_url = await getImage(names[i])
             if (obj_url) {
-              let bkg_copy = bkgImgs.slice();
+              const bkg_copy = bkgImgs.slice();
               bkg_copy[i].name = names[i];
               bkg_copy[i].imgPath = obj_url;
               setBkgImgs(bkg_copy);
@@ -133,7 +134,7 @@ function App() {
     fetchData("blocks").then(async (data) => {
       // console.log("blocks: ", data);`
       setBlocks(data);
-      let newShowEdit = [];
+      const newShowEdit = [];
       for (let i = 0; i < data.length; i++) {
           newShowEdit.push({i: data[i].data_grid.i, status: false});
       }
@@ -153,10 +154,11 @@ function App() {
 
     fetchThemes()
       .then(() => console.log("Got all images"))
-      .catch(e => console.log("uhoh"));
+      .catch(() => console.log("uhoh"));
   }, []);
 
   useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const {name, backImg, ...other_colors} = theme; 
     // setBackImg(backImg);
     getImage(backImg)
@@ -165,7 +167,7 @@ function App() {
           setBackgroundImg({ id: "current", name: backImg, imgPath: obj_url });  
         }
       })
-      .catch(err => {
+      .catch(() => {
         console.log("Couldn't get background image");
       })
     setColors(other_colors);
@@ -175,9 +177,11 @@ function App() {
     console.log("Background Image Changed: ", backgroundImage)
   }, [backgroundImage])
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function updateBackground(trash: any, newImg: string) {
     //setBackImg(newImg);
     const backImage = {backImg: newImg};
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const {backImg: oldImg, ...others} = theme;
     const newTheme = {...backImage, ...others}; 
     console.log("newTheme: ", newImg);
@@ -333,10 +337,10 @@ function App() {
         <ColorPalette display={dispColPal} colors={colors} updateColors={setColors}/>
         <ChangeTheme display={disTheme} colors={colors} theme={theme} updateTheme={chooseTheme}
                      bkgImgs={bkgImgs} updateBkgImgs={setBkgImgs} getImage={(img_name: string) => getImage(img_name)}/>
-        <SaveTheme display={disSave} colors={colors} theme={theme} updateTheme={setTheme} saveGrid={saveGrid} 
+        <SaveTheme display={disSave} colors={colors} saveGrid={saveGrid} 
                    bkgImgs={bkgImgs} getImage={(img_name: string) => getImage(img_name)} 
                    updateBkgImgs={(newBkgImgs: backImgType[]) => setBkgImgs(newBkgImgs)}/>
-        <ChangeBackground display={disBack} colors={colors} backImg={backgroundImage} 
+        <ChangeBackground display={disBack} colors={colors}
                           bkgImgs={bkgImgs} updateBackImg={updateBackground} 
                           updateBkgImgs={(newBkgImgs: backImgType[]) => setBkgImgs(newBkgImgs)}
                           getImage={(img_name: string) => getImage(img_name)}/>

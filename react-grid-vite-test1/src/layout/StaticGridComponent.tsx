@@ -1,3 +1,4 @@
+import React from 'react';
 import GridLayout from "react-grid-layout"; 
 import VideoDownloader from './VideoDownloader';
 import getConstants from "../utils/Constants";
@@ -13,7 +14,7 @@ export default function StaticGridComponent({ blocks2, colors, delBlocks, onUpda
 
     function removeBlock(id: string) {
         console.log(blocks2);
-        let blocks2copy = [...blocks2];
+        const blocks2copy = [...blocks2];
         let findBlock = blocks2copy.find(item => item.data_grid.i === id);
         if (!findBlock) {
             findBlock = { data_grid: { i: "null", x: 0, y: 0, w: 0, h: 0, isBounded: false, isResizable: false }, 
@@ -45,8 +46,9 @@ export default function StaticGridComponent({ blocks2, colors, delBlocks, onUpda
                                     height={block.data_grid.h*defaultRowHeight}></div> */}
                                 <div>
                                     <a target="_blank" 
-                                    href={block.link}
-                                    className='link'>
+                                       rel="noopener noreferrer"
+                                       href={block.link}
+                                       className='link'>
                                         <img src={block.img_url} 
                                             alt="Dinosaur" 
                                             width={block.data_grid.w*defaultRowHeight} 

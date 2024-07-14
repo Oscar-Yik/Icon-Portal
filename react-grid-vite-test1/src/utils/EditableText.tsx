@@ -2,8 +2,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import "./Background.css";
 
-import { blockType, blockModalType, colorType, updateBlocks2Fn, updateEditFn } from './../grid-types';
+import { colorType } from './../grid-types';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type onStateChangeFn = (trash: any, text: string) => void;
 
 type EditTextItemProps = { initialText: string, id: string, colors: colorType, onStateChange: onStateChangeFn }

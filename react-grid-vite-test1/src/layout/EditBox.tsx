@@ -33,11 +33,12 @@ export default function EditBox({showEdit, updateEdit, blocks2, updateBlocks2, c
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     function updateInfo(id: any, text: string) {
         fetchIcons(text).then(icon => {
             console.log("Got icon: ", icon);
-            let blocks2copy = blocks2.slice();
-            let block = blocks2copy.find(item => item.data_grid.i === id);
+            const blocks2copy = blocks2.slice();
+            const block = blocks2copy.find(item => item.data_grid.i === id);
             if (block) {
                 block.link = text;
                 block.img_url = icon; 

@@ -8,8 +8,8 @@ import VideoDownloader from './VideoDownloader';
 import getConstants from '../utils/Constants';
 
 import '../utils/Background.css'
-import { themeType, blockType, data_grid_type, blockModalType, colorType, 
-    unitType, apiKeys, themeNames, httpRequestType, updateBlocks2Fn, updateDelBlocksFn, updateEditFn } from './../grid-types';
+import { blockType, data_grid_type, blockModalType, colorType, updateBlocks2Fn, 
+         updateDelBlocksFn, updateEditFn } from './../grid-types';
 
 type MyFirstGridProps = { blocks2: blockType[], delBlocks: blockType[], showEdit: blockModalType[], 
     onUpdateBlocks2: updateBlocks2Fn, onUpdateDelBlocks: updateDelBlocksFn, 
@@ -22,7 +22,7 @@ export default function MyFirstGridComponent({blocks2, delBlocks, showEdit, onUp
 
     function removeBlock(id: string) {
         console.log(blocks2);
-        let blocks2copy = [...blocks2];
+        const blocks2copy = [...blocks2];
         let findBlock = blocks2copy.find(item => item.data_grid.i === id);
         if (!findBlock) {
             findBlock = { data_grid: { i: "null", x: 0, y: 0, w: 0, h: 0, isBounded: false, isResizable: false }, 
@@ -36,7 +36,7 @@ export default function MyFirstGridComponent({blocks2, delBlocks, showEdit, onUp
 
     function updateLayout(nlayout: data_grid_type[]) {
         // console.log("new layout: ", nlayout);
-        let oldLayout = blocks2.slice();
+        const oldLayout = blocks2.slice();
         for (let i = 0; i < blocks2.length; i++) {
             oldLayout[i].data_grid.x = nlayout[i].x;
             oldLayout[i].data_grid.y = nlayout[i].y;
@@ -48,8 +48,8 @@ export default function MyFirstGridComponent({blocks2, delBlocks, showEdit, onUp
     }
 
     function updateEdit(i: string, bool: boolean) {
-        let newEdit = showEdit.slice();
-        let edit = newEdit.find(item => item.i === i);
+        const newEdit = showEdit.slice();
+        const edit = newEdit.find(item => item.i === i);
         console.log("i: ", i, " bool: ", bool);
         console.log("showEdit: ", showEdit);
         if (edit) {

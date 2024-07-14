@@ -48,12 +48,12 @@ export default function ChangeTheme({ colors, display, theme, updateTheme, bkgIm
                 .then(new_image_url => {
                     const image_id = img_name.slice(18,-4);
                     const new_image = { id: image_id, name: img_name, imgPath: new_image_url };
-                    let bkgImgs_copy = bkgImgs.slice();
+                    const bkgImgs_copy = bkgImgs.slice();
                     bkgImgs_copy.push(new_image);
                     updateBkgImgs(bkgImgs_copy);
                     return new_image_url;
                 })
-                .catch(e => { console.log("something very bad has happened") });
+                .catch(() => { console.log("something very bad has happened") });
         }
     }
 

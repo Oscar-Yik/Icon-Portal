@@ -6,8 +6,10 @@ import App from './App'
 import errorImg from './assets/error_frog.png';
 //import './index.css'
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type throwAwayType = { error: any, resetErrorBoundary: any}
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function Fallback({ error, resetErrorBoundary }: throwAwayType) {
   return (
     <div style={{backgroundColor: "#AFE1AF", 

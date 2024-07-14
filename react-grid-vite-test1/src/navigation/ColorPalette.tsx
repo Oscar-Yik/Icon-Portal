@@ -26,7 +26,7 @@ export default function ColorPalette({ colors, display, updateColors }: ColorPal
 
 
     function handleColorChange(event: React.ChangeEvent<HTMLInputElement>, key: colorOptions) {
-        let newColor = { ...colors };
+        const newColor = { ...colors };
         // const index = newColor.findIndex(obj => obj.type === key);
         // if (index !== -1) {
             //newColor[index].url = event.target.value; 

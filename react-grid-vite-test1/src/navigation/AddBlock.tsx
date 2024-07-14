@@ -25,7 +25,7 @@ export default function AddBlock({
                             img_url: "https://chat.openai.com/favicon.ico" };
         updateAddBlocks([...addBlocks, newBlock2]);
         updateBlocks([...blocks2, newBlock2]);
-        let newNameID = (nameID > 150) ? 0 : nameID + 1; 
+        const newNameID = (nameID > 150) ? 0 : nameID + 1; 
         updateNameID(newNameID);
         updateEdit([...edit, {i: newBlock2.data_grid.i, status: false}]);
       }

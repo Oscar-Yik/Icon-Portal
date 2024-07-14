@@ -6,14 +6,11 @@ import { colorType, backImgType, themeType, themeNames, updateBkgImgs, getFuncti
 
 type saveFunction = (theme_name: themeNames) => void;
 
-type updateTheme = (newTheme: themeType) => void;
-
 type SaveThemeProps = { 
-    colors: colorType, display: boolean, theme: themeType, updateTheme: updateTheme,
+    colors: colorType, display: boolean,
     bkgImgs: backImgType[], updateBkgImgs: updateBkgImgs, getImage: getFunction, saveGrid: saveFunction }
 
-export default function SaveTheme({ colors, display, theme, updateTheme, saveGrid, bkgImgs, 
-                                    updateBkgImgs, getImage } : SaveThemeProps) {
+export default function SaveTheme({ colors, display, saveGrid, bkgImgs, updateBkgImgs, getImage } : SaveThemeProps) {
 
     const [allThemes, setAllThemes] = useState<themeType[]>([]);
 
@@ -50,12 +47,12 @@ export default function SaveTheme({ colors, display, theme, updateTheme, saveGri
                 .then(new_image_url => {
                     const image_id = img_name.slice(18,-4);
                     const new_image = { id: image_id, name: img_name, imgPath: new_image_url };
-                    let bkgImgs_copy = bkgImgs.slice();
+                    const bkgImgs_copy = bkgImgs.slice();
                     bkgImgs_copy.push(new_image);
                     updateBkgImgs(bkgImgs_copy);
                     return new_image_url;
                 })
-                .catch(e => { console.log("something very bad has happened") });
+                .catch(() => { console.log("something very bad has happened") });
         }
     }
 

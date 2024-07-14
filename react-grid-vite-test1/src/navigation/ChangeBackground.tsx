@@ -12,17 +12,18 @@ import getConstants from '../utils/Constants';
 
 import { colorType, backImgType, displayIcons, updateBkgImgs, getFunction } from './../grid-types';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type updateFunction = (trash: any, newImg: string) => void;
 
 type imageObject = { newImages: backImgType[], newBkgImgs: backImgType[] };
 
 type ChangeBackgroundProps = { 
-    colors: colorType, display: boolean, backImg: backImgType,
+    colors: colorType, display: boolean,
     bkgImgs: backImgType[], updateBackImg: updateFunction, updateBkgImgs: updateBkgImgs, getImage: getFunction}
 
 type IconNumber = 0 | 1 | 2;
 
-export default function ChangeBackground({ colors, display, backImg, bkgImgs, updateBackImg, updateBkgImgs, getImage } : ChangeBackgroundProps) {
+export default function ChangeBackground({ colors, display, bkgImgs, updateBackImg, updateBkgImgs, getImage } : ChangeBackgroundProps) {
 
     const [disIcons, setDisIcons] = useState<displayIcons>({ next: false, upload: false, edit: false });
     const [disImgs, setDisImgs] = useState<backImgType[]>([]);
@@ -39,7 +40,7 @@ export default function ChangeBackground({ colors, display, backImg, bkgImgs, up
     }, [])
 
     function updateDisIcon(icon: IconNumber) {
-        let newDisIcons = { ...disIcons }
+        const newDisIcons = { ...disIcons }
         if (icon === 0) {
             newDisIcons.next ? newDisIcons.next = false : newDisIcons.next = true;
         } else if (icon === 1) {
@@ -72,7 +73,7 @@ export default function ChangeBackground({ colors, display, backImg, bkgImgs, up
             }
             return { newImages: newImages, newBkgImgs: newBkgImgs };
         } catch (e) {
-            throw e; 
+            throw new Error("Couldn't fetch image"); 
         }
     }
 
@@ -132,27 +133,31 @@ export default function ChangeBackground({ colors, display, backImg, bkgImgs, up
             .catch(e => { console.log(`Didn't catch errors properly: ${getErrorMessage(e)}`) });
     }
 
-    async function readBuffer(file: File, start = 0, end = 2): Promise<Uint8Array> {
-        return new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = () => {
-            resolve(new Uint8Array(reader.result as ArrayBuffer));
-          };
-          reader.onerror = () => {
-            reject(new Error("Error reading file"));
-          };
-          reader.readAsArrayBuffer(file.slice(start, end));
-        });
-      }
+    // function for determining type of uploaded image
+    // async function readBuffer(file: File, start = 0, end = 2): Promise<Uint8Array> {
+    //     return new Promise((resolve, reject) => {
+    //       const reader = new FileReader();
+    //       reader.onload = () => {
+    //         resolve(new Uint8Array(reader.result as ArrayBuffer));
+    //       };
+    //       reader.onerror = () => {
+    //         reject(new Error("Error reading file"));
+    //       };
+    //       reader.readAsArrayBuffer(file.slice(start, end));
+    //     });
+    //   }
 
-    function check(headers: number[]) {
-        return (buffers: Uint8Array) =>
-            headers.every(
-                (header, index) => header === buffers[index]
-        );
-    }
-    // 89 50 4E 47 0D 0A 1A 0A
-    const isPNG = check([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]); 
+    // function to check if uploaded file matches the file type header's identification bytes
+    // function check(headers: number[]) {
+    //     return (buffers: Uint8Array) =>
+    //         headers.every(
+    //             (header, index) => header === buffers[index]
+    //     );
+    // }
+
+    // function to check if image is a png 
+    // // 89 50 4E 47 0D 0A 1A 0A
+    // const isPNG = check([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]); 
 
     const handleChange = async (event: ChangeEvent<HTMLInputElement>) => {
         const input = event.target as HTMLInputElement;
@@ -180,6 +185,7 @@ export default function ChangeBackground({ colors, display, backImg, bkgImgs, up
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     function updateTextImage(trash: any, newText: string) {
         console.log(newText);
         setTextimageIcon(1);
@@ -202,7 +208,7 @@ export default function ChangeBackground({ colors, display, backImg, bkgImgs, up
             const status = await response.json(); 
             return status; 
         } catch (e) {
-            throw e;
+            throw new Error("Couldn't upload an image from given url");
         }
     }
 
@@ -270,7 +276,7 @@ export default function ChangeBackground({ colors, display, backImg, bkgImgs, up
                         <div style={{display: "flex", justifyContent: "space-evenly"}}> 
                             <div style={{flex: "6"}}>
                                 <EditableTextItem initialText={textImage} id={"Background"} 
-                                                onStateChange={(id: any, newText: string) => updateTextImage(id, newText)} 
+                                                onStateChange={(id: string, newText: string) => updateTextImage(id, newText)} 
                                                 colors={colors}/>
                             </div>
                             {sendingIcon()}

@@ -25,7 +25,6 @@ export default function VideoDownloader ({block, removeBlock, colors} : VideoDow
     const [link, setLink] = useState("Choose Youtube Link");
     const [disDownload, setDisDownload] = useState(false);
     const [videos, setVideos] = useState([]);
-    const [pathes, setPathes] = useState([]);
     const { defaultRowHeight, colWidth, serverIP, protocol } = getConstants();
 
     const widget_IP = (import.meta.env.VITE_WIDGET_IP) ? 
@@ -68,6 +67,7 @@ export default function VideoDownloader ({block, removeBlock, colors} : VideoDow
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     function updateLink(trash: any, newLink: string) {
         console.log("new Link: ", newLink);
         setLink(newLink);
@@ -101,11 +101,6 @@ export default function VideoDownloader ({block, removeBlock, colors} : VideoDow
                 setDownload(false);
                 setDisDownload(true);
                 console.log(data);
-                let titles = data.title.map((path: string) => {
-                    // python-flask
-                    return "./python-flask/Videos/" + path;
-                })
-                setPathes(titles);
                 setVideos(data.title);
             })
             .catch(error => {

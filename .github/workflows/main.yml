@@ -8,7 +8,24 @@ on:
     - 'react-grid-vite-test1/**'
 
 jobs:
+  integrate: 
+    runs-on: ubuntu-latest
+    steps: 
+      - name: code checkout
+        uses: actions/checkout@v4  
+
+      - name: nodejs setup
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18.20.2'
+
+      - name: install dependencies 
+        run: |
+          cd react-grid-vite-test1
+          npm run lint
+
   deploy:
+    needs: integrate
     runs-on: ubuntu-latest
     steps:
 
