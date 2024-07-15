@@ -1,26 +1,25 @@
 // app.js
 
 import express from "express";
-import connectDB from "./config/db";
-import blockRoutes from "./routes/api/blocks";
-import unitRoutes from "./routes/api/units";
+import blockRoutes from "./routes/api/block_route";
+import unitRoutes from "./routes/api/unit_route";
 import cors from "cors";
 import bodyParser from "body-parser";
+import { Database } from "../layout-types";
+export default function (database: Database) {
+    const app = express();
 
-const app = express();
+    app.use(cors({ origin: true, credentials: true }));
 
-app.use(cors({ origin: true, credentials: true }));
+    app.use(bodyParser.json());
+    app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+    // Connect Database
+    database.connectToDatabase();
 
-// for the /api/blocks path
-app.use("/api/blocks", blockRoutes);
-app.use("/api/units", unitRoutes);
+    // for the /api/blocks path
+    app.use("/api/blocks", blockRoutes(database));
+    app.use("/api/units", unitRoutes(database));
 
-// Connect Database
-connectDB();
-
-app.get("/", (req, res) => res.send("Hello world!"));
-const port = process.env.PORT || 8092;
-app.listen(port, () => console.log(`Server running on port ${port}`));
+    return app;
+}

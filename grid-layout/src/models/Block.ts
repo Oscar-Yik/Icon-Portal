@@ -1,8 +1,9 @@
 // models/Block.js
 
-import mongoose from 'mongoose';
+import {Schema, model, Document} from 'mongoose';
+import { blockType } from '../../layout-types';
 
-const BlockSchema = new mongoose.Schema({
+const BlockSchema = new Schema<blockType & Document>({
   data_grid: {
     i: { type: String, required: true },
     x: { type: Number, required: true },
@@ -16,4 +17,4 @@ const BlockSchema = new mongoose.Schema({
   img_url: { type: String, required: true }
 });
 
-export default mongoose.model('block', BlockSchema);
+export default model<blockType & Document>('block', BlockSchema);

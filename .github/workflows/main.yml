@@ -60,4 +60,5 @@ jobs:
       run: |
         gcloud container clusters get-credentials icon-portal-cluster --region us-central1
         sed -i "s/GOOGLE_PROJECT/$GOOGLE_PROJECT/g" ./kubernetes/grid-client.yaml
+        kubectl delete deployment grid-client-deployment
         kubectl apply -f ./kubernetes/grid-client.yaml

@@ -16,8 +16,7 @@ export default function ChangeTheme({ colors, display, theme, updateTheme, bkgIm
 
     const { serverIP, protocol } = getConstants();
 
-    const theme_IP = (import.meta.env.VITE_THEMES_IP) ? 
-        (import.meta.env.VITE_THEMES_IP) : (`${serverIP}/grid-themes`);
+    const theme_IP = (import.meta.env.VITE_THEMES_IP) || (`${serverIP}/grid-themes`);
     
     useEffect(() => {
         if (display) {

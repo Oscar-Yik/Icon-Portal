@@ -27,8 +27,7 @@ export default function VideoDownloader ({block, removeBlock, colors} : VideoDow
     const [videos, setVideos] = useState([]);
     const { defaultRowHeight, colWidth, serverIP, protocol } = getConstants();
 
-    const widget_IP = (import.meta.env.VITE_WIDGET_IP) ? 
-        (import.meta.env.VITE_WIDGET_IP) : (`${serverIP}/python-flask`);
+    const widget_IP = (import.meta.env.VITE_WIDGET_IP) || (`${serverIP}/python-flask`);
 
     function downloadVideo() {
         videos.forEach((video) => {

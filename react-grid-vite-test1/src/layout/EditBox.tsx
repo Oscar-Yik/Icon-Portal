@@ -14,8 +14,7 @@ type EditBoxProps = {
 export default function EditBox({showEdit, updateEdit, blocks2, updateBlocks2, colors } : EditBoxProps) {
 
     const { defaultRowHeight, margins, colWidth, serverIP, protocol } = getConstants();
-    const icon_IP = (import.meta.env.VITE_ICON_IP) ? 
-        (import.meta.env.VITE_ICON_IP) : (`${serverIP}/icon-proxy`);
+    const icon_IP = (import.meta.env.VITE_ICON_IP) || (`${serverIP}/icon-proxy`);
 
     async function fetchIcons(url: string) {
         try {

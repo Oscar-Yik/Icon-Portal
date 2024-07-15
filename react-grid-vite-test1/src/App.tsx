@@ -56,11 +56,9 @@ function App() {
   
   const { serverIP, protocol } = getConstants();
 
-  const layout_IP = (import.meta.env.VITE_LAYOUT_IP) ? 
-    (import.meta.env.VITE_LAYOUT_IP) : (`${serverIP}/grid-layout`);
+  const layout_IP = (import.meta.env.VITE_LAYOUT_IP) || (`${serverIP}/grid-layout`);
 
-  const theme_IP = (import.meta.env.VITE_THEMES_IP) ? 
-    (import.meta.env.VITE_THEMES_IP) : (`${serverIP}/grid-themes`);
+  const theme_IP = (import.meta.env.VITE_THEMES_IP) || (`${serverIP}/grid-themes`);
 
   async function fetchData(name: apiKeys) {
     try {

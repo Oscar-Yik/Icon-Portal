@@ -16,8 +16,7 @@ export default function SaveTheme({ colors, display, saveGrid, bkgImgs, updateBk
 
     const { serverIP, protocol } = getConstants();
 
-    const theme_IP = (import.meta.env.VITE_THEMES_IP) ? 
-        (import.meta.env.VITE_THEMES_IP) : (`${serverIP}/grid-themes`);
+    const theme_IP = (import.meta.env.VITE_THEMES_IP) || (`${serverIP}/grid-themes`);
 
     useEffect(() => {
         if (display) {

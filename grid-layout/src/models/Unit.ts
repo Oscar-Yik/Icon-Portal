@@ -1,10 +1,11 @@
 // models/Unit.js
 
-import mongoose from 'mongoose';
+import {Schema, model, Document} from 'mongoose';
+import { unitType } from '../../layout-types';
 
-const UnitSchema = new mongoose.Schema({
+const UnitSchema = new Schema<unitType & Document>({
   key: { type: String, required: true }, 
   value: { type: String, required: true }
 });
 
-export default mongoose.model('unit', UnitSchema);
+export default model<unitType & Document>('unit', UnitSchema);

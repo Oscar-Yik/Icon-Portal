@@ -32,8 +32,7 @@ export default function ChangeBackground({ colors, display, bkgImgs, updateBackI
 
     const { serverIP, protocol } = getConstants();
 
-    const theme_IP = (import.meta.env.VITE_THEMES_IP) ? 
-        (import.meta.env.VITE_THEMES_IP) : (`${serverIP}/grid-themes`);
+    const theme_IP = (import.meta.env.VITE_THEMES_IP) || (`${serverIP}/grid-themes`);
 
     useEffect(() => {
         setDisImgs(bkgImgs);
