@@ -1,11 +1,15 @@
-import { blockType, unitType } from '../../layout-types';
+import { blockType, unitType, databaseType } from '../../layout-types';
 import Block from '../models/Block';
 import Unit from '../models/Unit';
-import connectDB from "../config/db";
+import mongoDB from "../config/db";
 import getErrorMessage from '../../Errors';
 
-export async function connectToDatabase() {
-    connectDB();
+async function connectToDatabase(type: databaseType) {
+    mongoDB.connectDB(type);
+}
+
+async function disconnectFromDatabase() {
+    mongoDB.disconnectDB();
 }
 
 // Block functions
@@ -42,7 +46,10 @@ async function createBlock(data: blockType) : Promise<number | null> {
 
 async function updateBlock(i: string, data: blockType) : Promise<number | null> {
     try {
-        await Block.findOneAndUpdate({ "data_grid.i": i }, data, { new: true });
+        const status = await Block.findOneAndUpdate({ "data_grid.i": i }, data, { new: true, runValidators: true });
+        if (!status) {
+            throw new Error("No block found");
+        }
         return 1; 
     } catch (error) {
         console.error("Error couldn't update block:", getErrorMessage(error));
@@ -50,10 +57,10 @@ async function updateBlock(i: string, data: blockType) : Promise<number | null> 
     }
 }
 
-async function deleteBlock(i: string) : Promise<number | null> {
+async function deleteBlock(i: string) : Promise<blockType | null> {
     try {
-        await Block.findOneAndDelete({ "data_grid.i": i })
-        return 1; 
+        const deleted = await Block.findOneAndDelete({ "data_grid.i": i }).lean<blockType>()
+        return deleted; 
     } catch (error) {
         console.error("Error couldn't delete block:", getErrorMessage(error));
         return null;
@@ -74,7 +81,10 @@ async function getAllUnits() : Promise<unitType[] | null>{
 
 async function getUnit(i: string) : Promise<unitType | null> {
     try {
-        const unit = await Unit.findOne({ "key": i }).select('-_id -__v')
+        const unit = await Unit.findOne({ "key": i }).select('-_id -__v');
+        if (!unit) {
+            throw new Error("No unit found");
+        }
         return unit;
     } catch (error) {
         console.error("Error fetching Specific Unit:", getErrorMessage(error));
@@ -94,7 +104,10 @@ async function createUnit(data: unitType) : Promise<number | null> {
 
 async function updateUnit(i: string, data: unitType) : Promise<number | null> {
     try {
-        await Unit.findOneAndUpdate({ "key": i }, data, { new: true });
+        const status = await Unit.findOneAndUpdate({ "key": i }, data, { new: true, runValidators: true });
+        if (!status) {
+            throw new Error("No unit found");
+        }
         return 1; 
     } catch (error) {
         console.error("Error couldn't update unit:", getErrorMessage(error));
@@ -102,17 +115,17 @@ async function updateUnit(i: string, data: unitType) : Promise<number | null> {
     }
 }
 
-async function deleteUnit(i: string) : Promise<number | null> {
+async function deleteUnit(i: string) : Promise<unitType | null> {
     try {
-        await Unit.findOneAndDelete({ "key": i })
-        return 1; 
+        const deleted = await Unit.findOneAndDelete({ "key": i }).lean<unitType>()
+        return deleted; 
     } catch (error) {
         console.error("Error couldn't delete unit:", getErrorMessage(error));
         return null;
     }
 }
 
-const mongo = { connectToDatabase, getAllBlocks, getBlock, createBlock, updateBlock, deleteBlock, 
+const mongo = { connectToDatabase, disconnectFromDatabase, getAllBlocks, getBlock, createBlock, updateBlock, deleteBlock, 
                 getAllUnits, getUnit, createUnit, updateUnit, deleteUnit }; 
 
 export default mongo;

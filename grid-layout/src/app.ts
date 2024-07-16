@@ -15,7 +15,7 @@ export default function (database: Database) {
     app.use(bodyParser.urlencoded({ extended: true }));
 
     // Connect Database
-    database.connectToDatabase();
+    database.connectToDatabase("DEV");
 
     // for the /api/blocks path
     app.use("/api/blocks", blockRoutes(database));

@@ -6,6 +6,7 @@ on:
     - 'main'
     paths: 
     - 'react-grid-vite-test1/**'
+    - 'grid-layout/**'
 
 jobs:
   integrate: 
@@ -24,6 +25,12 @@ jobs:
           cd react-grid-vite-test1
           npm install
           npm run lint
+      
+      - name: install dependencies and run unit/integration test on grid-layout
+        run: |
+          cd ../grid-layout 
+          npm install
+          npm run test
 
   deploy:
     needs: integrate
