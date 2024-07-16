@@ -11,6 +11,10 @@ on:
 jobs:
   integrate: 
     runs-on: ubuntu-latest
+    env: 
+      MONGODB_USER: '${{ secrets.MONGODB_USERNAME }}'
+      MONGODB_DBNAME_LAYOUT: '${{ secrets.MONGODB_NAME_LAYOUT }}'
+      TEST_MONGODB_PASSWORD: '${{ secrets.MONGODB_TEST_PASSWORD }}'
     steps: 
       - name: code checkout
         uses: actions/checkout@v4  

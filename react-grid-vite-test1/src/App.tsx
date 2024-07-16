@@ -95,9 +95,6 @@ function App() {
         const blob = await response.blob();
         const objectURL = URL.createObjectURL(blob);
         return objectURL;
-        // let bkg_copy = bkgImgs.slice();
-        // bkg_copy[index].imgPath = objectURL;
-        // setBkgImgs(bkg_copy);
     } catch (error) {
         console.log("Error retrieving image:", img_name);
         return img_name;
@@ -213,9 +210,6 @@ function App() {
   }
 
   function saveGrid(theme_name: themeNames){
-    // console.log("addBlocks: ", addBlocks); 
-    // console.log("delBlocks: ", delBlocks); 
-    // console.log("blocks2: ", blocks2); 
     for (let j = 0; j < delBlocks.length; j++) {
       console.log("Deleted Block: ", delBlocks[j]);
       requestBlock(delBlocks[j].data_grid.i, delBlocks[j], "DELETE");
