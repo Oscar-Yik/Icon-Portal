@@ -28,7 +28,7 @@ jobs:
       
       - name: install dependencies and run unit/integration test on grid-layout
         run: |
-          cd ../grid-layout 
+          cd grid-layout 
           npm install
           npm run test
 
