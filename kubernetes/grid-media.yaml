@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: grid-media-container
-        image: oscaryik/grid-thing-widget:2.0
+        image: oscaryik/grid-thing-widget:2.2
         ports:
         - containerPort: 3001
         env: 
