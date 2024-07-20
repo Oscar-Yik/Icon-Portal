@@ -35,6 +35,7 @@ const upload = multer({ storage: storage });
 
 import ImagePath from '../../models/ImagePath';
 import Metadata from '../../models/Metadata';
+import { hostname } from "os";
 
 // @route   GET api/s3/test
 // @desc    Tests s3 route
@@ -215,26 +216,41 @@ async function makePostRequest(file_name: string, is_url: boolean) : Promise<str
         const body = JSON.stringify({ "img_name": file_name, "is_url": is_url });
 
         const options = {
-            hostname: (process.env.VITE_THEMES_IP) ? (process.env.VITE_THEMES_IP) : ("icon-portal.click/grid-themes"), 
-            port: 8082, 
-            path: "/api/s3",
+            hostname: (process.env.VITE_THEMES_IP) || ("icon-portal.click"), 
+            port: (process.env.VITE_THEMES_IP) ? 8082 : 443,
+            path: (process.env.VITE_THEMES_IP) ? "/api/s3" : "/grid-themes/api/s3",
             method: "POST", 
             headers: {
                 'Content-Type': "application/json",
                 'Content-Length': Buffer.byteLength(body)
             }
         };
-    
-        http.request(options, res => {
-            let data = "";
-            res.on("data", chunk => { data += chunk; })
-            res.on("end", () => { resolve(data); })
-        })
-        .on("error", err => { 
-            console.log("Error in making post request to s3"); 
-            reject(err); 
-        })
-        .end(body);
+
+        if (process.env.VITE_THEMES_IP) {
+            console.log(`making request to: http://${options.hostname}:${options.port}${options.path}`);
+            http.request(options, res => {
+                let data = "";
+                res.on("data", chunk => { data += chunk; })
+                res.on("end", () => { resolve(data); })
+            })
+            .on("error", err => { 
+                console.log("Error in making http post request to s3"); 
+                reject(err); 
+            })
+            .end(body);
+        } else {
+            console.log(`making request to: https://${options.hostname}:${options.port}${options.path}`);
+            https.request(options, res => {
+                let data = "";
+                res.on("data", chunk => { data += chunk; })
+                res.on("end", () => { resolve(data); })
+            })
+            .on("error", err => { 
+                console.log("Error in making https post request to s3"); 
+                reject(err); 
+            })
+            .end(body);
+        }
     });
 }
 
@@ -300,7 +316,7 @@ router.post('/', (req, res) => {
     let img_name = req.body.img_name;
     let image_path = 'assets/upload/' + img_name;
 
-    console.log(`Making s3 post request on: ${image_path}`);
+    console.log(`------Making s3 post request on: ${image_path}------`);
 
     function downloadImage(image_url: string, image_path: string) : Promise<string> {
         return new Promise((resolve, reject) => {
@@ -325,13 +341,17 @@ router.post('/', (req, res) => {
     async function check_url(is_url: string) : Promise<string> {
         try {
             if (is_url) {
+                console.log("request is a url, getting new name for image...");
                 const new_name = await getNewName();
+                console.log("got name for image! downloading image using url....");
                 await downloadImage(req.body.img_name, 'assets/upload/' + new_name);
+                console.log("downloaded image!");
                 img_name = new_name;
                 image_path = 'assets/upload/' + new_name;
                 return 'assets/upload/' + new_name;
             } else {
-                throw new Error("No url was given");
+                console.log("request is not a url");
+                return "request body contains image";
             }
         } catch (e) {
             // console.log(e);
@@ -341,9 +361,12 @@ router.post('/', (req, res) => {
 
     async function putObject() {
         try {
+            console.log("------Checking if request is a url------")
             await check_url(req.body.is_url);
+            console.log("------Finished checking if request was a url------");
+            console.log("getting fileContent...")
             const fileContent = fs.readFileSync(image_path);
-                
+            console.log("got fileContent! making post request to s3 bucket...");
             const command = new PutObjectCommand({
               Bucket: process.env.AWS_S3_BUCKET_NAME_IMAGES,
               Key: "images/" + img_name,
@@ -361,6 +384,7 @@ router.post('/', (req, res) => {
     putObject() 
         .then(async response => {
             try {
+                console.log("------Sent post request successfully! Adding path to MongoDB------");
                 const metadata = await Metadata.find({ name: "img_count" }).select('-_id -__v');
                 if (!metadata[0]) {
                     throw new Error("Couldn't get img_count");
@@ -387,7 +411,8 @@ router.post('/', (req, res) => {
                 if (!createdImg) {
                     throw new Error("Couldn't upload image path to MongoDB");
                 } 
-
+                console.log("------finished adding path to MongoDB------");
+                console.log("------finished making post request------")
                 res.json(response);
             } catch (e) {
                 if (e instanceof Error) {
