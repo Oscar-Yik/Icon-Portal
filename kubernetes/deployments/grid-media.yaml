@@ -4,6 +4,7 @@ metadata:
   name: grid-media-deployment
   labels:
     app: grid-media
+  namespace: icon-portal-namespace
 spec:
   replicas: 1
   selector:
@@ -55,15 +56,3 @@ spec:
             secretKeyRef: 
               name: grid-secret 
               key: AWS_SECRET_KEY_FLASK 
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: grid-media-service
-spec:
-  selector:
-    app: grid-media
-  ports:
-    - protocol: TCP
-      port: 3001
-      targetPort: 3001

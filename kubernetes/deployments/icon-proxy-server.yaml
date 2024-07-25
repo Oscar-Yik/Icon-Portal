@@ -4,6 +4,7 @@ metadata:
   name: icon-proxy-server-deployment
   labels:
     app: icon-proxy-server
+  namespace: icon-portal-namespace
 spec:
   replicas: 1
   selector:
@@ -19,15 +20,3 @@ spec:
         image: oscaryik/grid-thing-icon-proxy:2.0
         ports:
         - containerPort: 3000
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: icon-proxy-server-service
-spec:
-  selector:
-    app: icon-proxy-server
-  ports:
-    - protocol: TCP
-      port: 3000
-      targetPort: 3000

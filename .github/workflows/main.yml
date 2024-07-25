@@ -70,6 +70,6 @@ jobs:
         GOOGLE_PROJECT: ${{ secrets.GOOGLE_PROJECT }}
       run: |
         gcloud container clusters get-credentials icon-portal-cluster --region us-central1
-        sed -i "s/GOOGLE_PROJECT/$GOOGLE_PROJECT/g" ./kubernetes/grid-client.yaml
+        sed -i "s/GOOGLE_PROJECT/$GOOGLE_PROJECT/g" ./kubernetes/deployments/grid-client.yaml
         kubectl delete deployment grid-client-deployment
-        kubectl apply -f ./kubernetes/grid-client.yaml
+        kubectl apply -f ./kubernetes/deployments/grid-client.yaml

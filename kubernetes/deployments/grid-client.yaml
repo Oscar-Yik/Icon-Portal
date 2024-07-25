@@ -4,6 +4,7 @@ metadata:
   name: grid-client-deployment
   labels:
     app: grid-client
+  namespace: icon-portal-namespace
 spec:
   replicas: 1
   selector:
@@ -19,18 +20,3 @@ spec:
         image: us-central1-docker.pkg.dev/GOOGLE_PROJECT/icon-portal-images/grid-thing-client:latest
         ports:
         - containerPort: 80
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: grid-client-service
-  annotations:
-    cloud.google.com/neg: '{"ingress": true}'
-spec:
-  type: ClusterIP
-  selector:
-    app: grid-client
-  ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 80

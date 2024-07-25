@@ -4,6 +4,7 @@ metadata:
   name: grid-themes-deployment
   labels:
     app: grid-themes
+  namespace: icon-portal-namespace
 spec:
   replicas: 1
   selector:
@@ -16,7 +17,7 @@ spec:
     spec:
       containers:
       - name: grid-themes-container
-        image: oscaryik/grid-thing-grid-themes:2.4
+        image: oscaryik/grid-thing-grid-themes:2.5.1
         ports:
         - containerPort: 8082
         env: 
@@ -60,15 +61,3 @@ spec:
             secretKeyRef: 
               name: grid-secret 
               key: AWS_SECRET_KEY_NODE 
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: grid-themes-service
-spec:
-  selector:
-    app: grid-themes
-  ports:
-    - protocol: TCP
-      port: 8082
-      targetPort: 8082

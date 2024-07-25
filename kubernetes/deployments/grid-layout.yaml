@@ -4,6 +4,7 @@ metadata:
   name: grid-layout-deployment
   labels:
     app: grid-layout
+  namespace: icon-portal-namespace
 spec:
   replicas: 1
   selector:
@@ -40,15 +41,3 @@ spec:
             secretKeyRef: 
               name: grid-secret 
               key: MONGODB_DBNAME_LAYOUT 
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: grid-layout-service
-spec:
-  selector:
-    app: grid-layout
-  ports:
-    - protocol: TCP
-      port: 8092
-      targetPort: 8092
