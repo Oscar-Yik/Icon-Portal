@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grid-client-deployment
+  labels:
+    app: grid-client
+  namespace: icon-portal-namespace
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grid-client
+  template:
+    metadata:
+      labels:
+        app: grid-client
+    spec:
+      containers:
+      - name: grid-client-container
+        image: us-central1-docker.pkg.dev/GOOGLE_PROJECT/icon-portal-images/grid-thing-client:latest
+        ports:
+        - containerPort: 80

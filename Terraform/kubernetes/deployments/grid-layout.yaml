@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grid-layout-deployment
+  labels:
+    app: grid-layout
+  namespace: icon-portal-namespace
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grid-layout
+  template:
+    metadata:
+      labels:
+        app: grid-layout
+    spec:
+      containers:
+      - name: grid-layout-container
+        image: oscaryik/grid-thing-grid-layout:2.0
+        ports:
+        - containerPort: 8092
+        env: 
+        - name: MONGODB_PASSWORD
+          valueFrom:
+            secretKeyRef: 
+              name: grid-secret 
+              key: MONGODB_PASSWORD 
+        - name: MONGODB_USER
+          valueFrom:
+            secretKeyRef: 
+              name: grid-secret 
+              key: MONGODB_USER 
+        - name: DEV_MONGODB_PASSWORD
+          valueFrom:
+            secretKeyRef: 
+              name: grid-secret 
+              key: DEV_MONGODB_PASSWORD 
+        - name: MONGODB_DBNAME_LAYOUT
+          valueFrom:
+            secretKeyRef: 
+              name: grid-secret 
+              key: MONGODB_DBNAME_LAYOUT 

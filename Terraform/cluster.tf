@@ -1,8 +1,19 @@
 terraform {
+  cloud {
+    organization = "oscaryik_org"
+
+    workspaces {
+      name = "first-workspace"
+    }
+  }
   required_providers {
     google = {
       source  = "hashicorp/google"
       version = "5.38.0"
+    }
+    kubectl = {
+      source  = "gavinbunney/kubectl"
+      version = "1.14.0"
     }
   }
  
@@ -10,8 +21,8 @@ terraform {
 }
 
 provider "google" {
-  credentials = file("./../secret/project-key.json")
-  project     = "splendid-world-428905-h3"
+  credentials = var.GOOGLE_CREDENTIALS
+  project     = var.PROJECT_NAME
   region      = "us-central1"
 }
 
@@ -41,12 +52,6 @@ resource "google_compute_subnetwork" "default" {
     range_name    = "pod-ranges"
     ip_cidr_range = "192.168.1.0/24"
   }
-}
-
-resource "google_compute_global_address" "external_static_ip" {
-  name = "icon-portal-external-static-ip"
-  project = "splendid-world-428905-h3"
-  address_type = "EXTERNAL"
 }
 
 resource "google_container_cluster" "default" {

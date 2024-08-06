@@ -1,0 +1,1 @@
+docker run -it --mount type=bind,source=/Terraform,target=/data terraform destroy 

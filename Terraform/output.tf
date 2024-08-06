@@ -1,5 +1,14 @@
-output "external-ip-address" {
-    value = google_compute_global_address.external_static_ip.address
-    description = "external ip for ingress controller"
+output "k8s_host" {
+  value = "https://${google_container_cluster.default.endpoint}"
+  sensitive = true
 }
 
+output "k8s_token" {
+  value = data.google_client_config.default.access_token
+  sensitive = true
+}
+
+output "k8s_ca_cert" {
+  value = base64decode(google_container_cluster.default.master_auth[0].cluster_ca_certificate)
+  sensitive = true
+}
