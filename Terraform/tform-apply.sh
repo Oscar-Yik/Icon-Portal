@@ -1,1 +1,4 @@
-docker run -it --mount type=bind,source=/Terraform,target=/data terraform apply 
+#!/bin/sh
+echo "Current Date and Time: $(date)"
+cd /home/azureuser/Terraform
+sudo docker run --rm -it -v $PWD:/data -w /data hashicorp/terraform:1.9.2 apply -auto-approve

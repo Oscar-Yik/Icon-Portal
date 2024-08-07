@@ -1,11 +1,4 @@
 terraform {
-  cloud {
-    organization = "oscaryik_org"
-
-    workspaces {
-      name = "first-workspace"
-    }
-  }
   required_providers {
     google = {
       source  = "hashicorp/google"
@@ -21,7 +14,7 @@ terraform {
 }
 
 provider "google" {
-  credentials = var.GOOGLE_CREDENTIALS
+  credentials = file("./../secret/project-key.json")
   project     = var.PROJECT_NAME
   region      = "us-central1"
 }
